@@ -117,6 +117,43 @@
     @keyframes blink {
       50% { opacity: 0; }
     }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .content {
+        padding: 16px;
+        font-size: 12px;
+      }
+
+      .title {
+        margin-right: 40px;
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px 10px;
+        padding: 6px 0;
+      }
+
+      .row::before {
+        content: "";
+        flex-basis: 100%;
+        order: 5;
+      }
+
+      .perms { order: 1; width: auto; }
+      .user { order: 2; width: auto; }
+      .size { order: 3; width: auto; }
+      .date { order: 4; width: auto; }
+      .name { order: 6; }
+      .arrow { order: 7; }
+      .plain { order: 8; }
+      .desc { order: 9; margin-left: 8px; }
+    }
   </style>
 </head>
 
@@ -150,14 +187,14 @@
           <span class="user">unlibra</span>
           <span class="size">18</span>
           <span class="date">Apr 6 2020</span>
-          <a href="https://github.com/unlibra" class="name">github</a> -> <a href="https://github.com/unlibra" class="plain">github.com/unlibra</a>
+          <a href="https://github.com/unlibra" class="name">github</a><span class="arrow"> -> </span><a href="https://github.com/unlibra" class="plain">github.com/unlibra</a>
         </div>
         <div class="row">
           <span class="perms">lrwxrwxrwx</span>
           <span class="user">unlibra</span>
           <span class="size">11</span>
           <span class="date">Nov 29 2025</span>
-          <a href="https://unlibra.com" class="name">portfolio</a> -> <a href="https://unlibra.com" class="plain">unlibra.com</a>
+          <a href="https://unlibra.com" class="name">portfolio</a><span class="arrow"> -> </span><a href="https://unlibra.com" class="plain">unlibra.com</a>
         </div>
         <div class="row">
           <span class="perms">drwxr-xr-x</span>
@@ -173,13 +210,13 @@
           <span class="size">4096</span>
           <span class="date">May 27 2020</span>
           <a href="/tkinter-unblur/" class="name">tkinter-unblur/</a>
-          <span class="desc"># Fix blurry Tkinter</span>
+          <span class="desc"># Fix blurry Tkinter library</span>
         </div>
       </div>
       <div><span class="prompt">unlibra@github</span>:<span class="cmd">~$</span> <span class="cursor"></span></div>
     </code>
   </div>
-  <footer style="margin-top: 20px; text-align: center;">
+  <footer style="position: fixed; bottom: 10px; left: 0; right: 0; text-align: center;">
     <a href="/sitemap.html" style="color: #666; font-size: 12px;">Sitemap</a>
   </footer>
 </body>
