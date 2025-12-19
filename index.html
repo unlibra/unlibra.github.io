@@ -27,7 +27,7 @@
 
     .terminal {
       width: 100%;
-      max-width: 720px;
+      max-width: 768px;
       background: #1e1e1e;
       border-radius: 8px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
@@ -95,15 +95,16 @@
       display: flex;
       gap: 16px;
       padding: 2px 0;
+      white-space: nowrap;
     }
 
-    .perms { color: #888; width: 100px; }
+    .perms { color: #888; width: 85px; }
     .user { color: #888; width: 55px; }
-    .size { color: #888; width: 40px; text-align: right; }
-    .date { color: #888; width: 105px; }
+    .size { color: #888; width: 35px; text-align: right; }
+    .date { color: #888; width: 90px; }
     .name { color: #6db3f2; }
     .plain { color: inherit; text-decoration: none; }
-    .desc { color: #666; font-style: italic; margin-left: 8px; }
+    .desc { color: #666; font-style: italic; }
 
     .cursor {
       display: inline-block;
@@ -186,7 +187,7 @@
           <span class="perms">lrwxrwxrwx</span>
           <span class="user">unlibra</span>
           <span class="size">18</span>
-          <span class="date">Apr 6 2020</span>
+          <span class="date">Apr &nbsp;6 2020</span>
           <a href="https://github.com/unlibra" class="name">github</a><span class="arrow"> -> </span><a href="https://github.com/unlibra" class="plain">github.com/unlibra</a>
         </div>
         <div class="row">
@@ -200,7 +201,7 @@
           <span class="perms">drwxr-xr-x</span>
           <span class="user">unlibra</span>
           <span class="size">4096</span>
-          <span class="date">Dec 3 2025</span>
+          <span class="date">Dec &nbsp;3 2025</span>
           <a href="/i18n-tiny/" class="name">i18n-tiny/</a>
           <span class="desc"># The simplest i18n library</span>
         </div>
