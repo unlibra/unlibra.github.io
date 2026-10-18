@@ -1,0 +1,1 @@
+var e=`/mururu-blink-lipsync/images/1-2.png`,t=`/mururu-blink-lipsync/images/1-3.png`,n=`/mururu-blink-lipsync/images/1-4.png`,r=`/mururu-blink-lipsync/images/2.png`;export{e as i,n,t as r,r as t};

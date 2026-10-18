@@ -1,0 +1,1 @@
+import{G as e,W as t,n,rt as r}from"./chunks/framework.DpaCCLuo.js";var i=JSON.parse(`{"title":"FAQ","description":"","frontmatter":{},"headers":[],"relativePath":"faq.md","filePath":"faq.md"}`),a={name:`faq.md`};function o(n,i,a,o,s,c){return r(),t(`div`,null,[...i[0]||=[e("",23)]])}var s=n(a,[[`render`,o]]);export{i as __pageData,s as default};
