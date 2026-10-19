@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Index of projects hosted on unlibra.github.io">
-  <title>unlibra.github.io</title>
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="description" content="Index of projects hosted on docs.unlibra.com">
+  <title>docs.unlibra.com</title>
+  <link rel="icon" href="/brand/symbol.svg" type="image/svg+xml">
 
   <style>
     * {
@@ -99,12 +99,12 @@
     }
 
     .perms { color: #888; width: 85px; }
-    .user { color: #888; width: 55px; }
+    .links { color: #888; width: 10px; text-align: right; }
+    .user { color: #888; width: 35px; }
     .size { color: #888; width: 35px; text-align: right; }
     .date { color: #888; width: 90px; }
     .name { color: #6db3f2; }
     .plain { color: inherit; text-decoration: none; }
-    .desc { color: #666; font-style: italic; }
 
     .cursor {
       display: inline-block;
@@ -143,17 +143,17 @@
       .row::before {
         content: "";
         flex-basis: 100%;
-        order: 5;
+        order: 6;
       }
 
       .perms { order: 1; width: auto; }
-      .user { order: 2; width: auto; }
-      .size { order: 3; width: auto; }
-      .date { order: 4; width: auto; }
-      .name { order: 6; }
-      .arrow { order: 7; }
-      .plain { order: 8; }
-      .desc { order: 9; margin-left: 8px; }
+      .links { order: 2; width: auto; }
+      .user { order: 3; width: auto; }
+      .size { order: 4; width: auto; }
+      .date { order: 5; width: auto; }
+      .name { order: 7; }
+      .arrow { order: 8; }
+      .plain { order: 9; }
     }
   </style>
 </head>
@@ -164,65 +164,71 @@
       <div class="btn btn-red"></div>
       <div class="btn btn-yellow"></div>
       <div class="btn btn-green"></div>
-      <div class="title">unlibra — zsh</div>
+      <div class="title">guest@docs: ~</div>
     </div>
     <code class="content">
-      <div><span class="prompt">unlibra@github</span>:<span class="cmd">~$ ls -la</span></div>
+      <div><span class="prompt">guest@docs</span>:<span class="cmd">~$ ls -lao</span></div>
       <div class="output">
+        <!-- total: 4 per directory row. Link counts: 2 for directories, 1 for links. -->
+        <div>total 20</div>
         <div class="row">
           <span class="perms">drwxr-xr-x</span>
-          <span class="user">unlibra</span>
+          <span class="links">2</span>
+          <span class="user">docs</span>
           <span class="size">4096</span>
           <span class="date">Dec 19 2025</span>
           <a href="/" class="name">.</a>
         </div>
         <div class="row">
           <span class="perms">drwxr-xr-x</span>
-          <span class="user">unlibra</span>
+          <span class="links">2</span>
+          <span class="user">docs</span>
           <span class="size">4096</span>
           <span class="date">Dec 19 2025</span>
           <a href="/" class="name">..</a>
         </div>
         <div class="row">
           <span class="perms">lrwxrwxrwx</span>
-          <span class="user">unlibra</span>
+          <span class="links">1</span>
+          <span class="user">docs</span>
           <span class="size">18</span>
           <span class="date">Apr &nbsp;6 2020</span>
           <a href="https://github.com/unlibra" class="name">github</a><span class="arrow"> -> </span><a href="https://github.com/unlibra" class="plain">github.com/unlibra</a>
         </div>
         <div class="row">
           <span class="perms">lrwxrwxrwx</span>
-          <span class="user">unlibra</span>
+          <span class="links">1</span>
+          <span class="user">docs</span>
           <span class="size">11</span>
           <span class="date">Nov 29 2025</span>
           <a href="https://unlibra.com" class="name">portfolio</a><span class="arrow"> -> </span><a href="https://unlibra.com" class="plain">unlibra.com</a>
         </div>
         <div class="row">
           <span class="perms">drwxr-xr-x</span>
-          <span class="user">unlibra</span>
-          <span class="size">4096</span>
-          <span class="date">Dec &nbsp;3 2025</span>
-          <a href="/i18n-tiny/" class="name">i18n-tiny/</a>
-          <span class="desc"># The simplest i18n library</span>
-        </div>
-        <div class="row">
-          <span class="perms">drwxr-xr-x</span>
-          <span class="user">unlibra</span>
-          <span class="size">4096</span>
-          <span class="date">Oct 13 2026</span>
-          <a href="/mururu-blink-lipsync/" class="name">mururu-blink-lipsync/</a>
-          <span class="desc"># Blink & lipsync for Mururu</span>
-        </div>
-        <div class="row">
-          <span class="perms">drwxr-xr-x</span>
-          <span class="user">unlibra</span>
+          <span class="links">2</span>
+          <span class="user">docs</span>
           <span class="size">4096</span>
           <span class="date">May 27 2020</span>
-          <a href="/tkinter-unblur/" class="name">tkinter-unblur/</a>
-          <span class="desc"># Fix blurry Tkinter library</span>
+          <a href="/tkinter-unblur/" class="name">tkinter-unblur</a>
+        </div>
+        <div class="row">
+          <span class="perms">drwxr-xr-x</span>
+          <span class="links">2</span>
+          <span class="user">docs</span>
+          <span class="size">4096</span>
+          <span class="date">Dec &nbsp;3 2025</span>
+          <a href="/i18n-tiny/" class="name">i18n-tiny</a>
+        </div>
+        <div class="row">
+          <span class="perms">drwxr-xr-x</span>
+          <span class="links">2</span>
+          <span class="user">docs</span>
+          <span class="size">4096</span>
+          <span class="date">Oct 13 2026</span>
+          <a href="/mururu-blink-lipsync/" class="name">mururu-blink-lipsync</a>
         </div>
       </div>
-      <div><span class="prompt">unlibra@github</span>:<span class="cmd">~$</span> <span class="cursor"></span></div>
+      <div><span class="prompt">guest@docs</span>:<span class="cmd">~$</span> <span class="cursor"></span></div>
     </code>
   </div>
   <footer style="position: fixed; bottom: 10px; left: 0; right: 0; text-align: center;">
