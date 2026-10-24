@@ -1,0 +1,56 @@
+# Checks docs.unlibra.com every day: the shared files at the root, and every
+# page in the sitemaps of the projects (listed from /sitemap.xml) answer 200.
+# A broken deploy of any project shows up as a failed run, which GitHub mails
+# to the user who last changed the schedule.
+#
+# GitHub turns off scheduled workflows of a public repository after 60 days
+# without activity; it mails a warning first.
+name: Production check
+
+on:
+  schedule:
+    # 21:37 UTC = 06:37 JST, off the hour, when scheduled runs pile up.
+    - cron: "37 21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Every page answers 200
+        run: |
+          set -euo pipefail
+          site=https://docs.unlibra.com
+          failed=0
+          check() {
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$1" || true)
+            if [ "$code" = 200 ]; then
+              echo "OK   $1"
+            else
+              echo "FAIL $code $1"
+              failed=1
+            fi
+          }
+          locs() { curl -sf --max-time 30 "$1" | grep -o '<loc>[^<]*' | cut -c6-; }
+
+          for path in / /robots.txt /sitemap.xml /llms.txt /favicon.ico /apple-touch-icon.png /brand/symbol.svg; do
+            check "$site$path"
+          done
+          sitemaps=$(locs "$site/sitemap.xml")
+          [ -n "$sitemaps" ] || { echo "FAIL no sitemaps in $site/sitemap.xml"; exit 1; }
+          for sitemap in $sitemaps; do
+            pages=$(locs "$sitemap" || true)
+            if [ -z "$pages" ]; then
+              echo "FAIL no pages in $sitemap"
+              failed=1
+            fi
+            for page in $pages; do
+              check "$page"
+            done
+          done
+          exit "$failed"

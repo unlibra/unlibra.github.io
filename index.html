@@ -6,7 +6,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Index of projects hosted on docs.unlibra.com">
   <title>docs.unlibra.com</title>
+  <link rel="canonical" href="https://docs.unlibra.com/">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" href="/brand/symbol.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <!-- The same OGP image as unlibra.com, for every site on docs.unlibra.com. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="docs.unlibra.com">
+  <meta property="og:title" content="docs.unlibra.com">
+  <meta property="og:description" content="Index of projects hosted on docs.unlibra.com">
+  <meta property="og:url" content="https://docs.unlibra.com/">
+  <meta property="og:image" content="https://unlibra.com/ogp.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "docs.unlibra.com",
+      "url": "https://docs.unlibra.com/",
+      "publisher": { "@type": "Person", "name": "unlibra", "url": "https://unlibra.com" },
+      "hasPart": [
+        { "@type": "WebSite", "name": "tkinter-unblur", "url": "https://docs.unlibra.com/tkinter-unblur/" },
+        { "@type": "WebSite", "name": "i18n-tiny", "url": "https://docs.unlibra.com/i18n-tiny/" },
+        { "@type": "WebSite", "name": "Mururu Blink & LipSync", "url": "https://docs.unlibra.com/mururu-blink-lipsync/" }
+      ]
+    }
+  </script>
 
   <style>
     * {
@@ -55,7 +84,8 @@
     .title {
       flex: 1;
       text-align: center;
-      color: #999;
+      /* 4.5:1 on the title bar */
+      color: #b3b3b3;
       font-size: 13px;
       margin-right: 52px;
     }
@@ -159,7 +189,7 @@
 </head>
 
 <body>
-  <div class="terminal">
+  <main class="terminal">
     <div class="titlebar">
       <div class="btn btn-red"></div>
       <div class="btn btn-yellow"></div>
@@ -230,7 +260,7 @@
       </div>
       <div><span class="prompt">guest@docs</span>:<span class="cmd">~$</span> <span class="cursor"></span></div>
     </code>
-  </div>
+  </main>
 </body>
 
 </html>
