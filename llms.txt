@@ -1,0 +1,14 @@
+# docs.unlibra.com
+
+> Documentation for the open source libraries and tools by unlibra (https://unlibra.com).
+
+Each project's documentation has its own llms.txt with every page, and llms-full.txt with the full text.
+
+## Projects
+
+- [i18n-tiny](https://docs.unlibra.com/i18n-tiny/llms.txt): Tiny, type-safe, zero-dependency i18n library for Next.js, Astro and React.
+- [tkinter-unblur](https://docs.unlibra.com/tkinter-unblur/llms.txt): Fix blurry Tkinter applications on Windows 10/11 high-DPI displays.
+
+## Optional
+
+- [Mururu Blink & LipSync](https://docs.unlibra.com/mururu-blink-lipsync/): Manual (in Japanese) of a Unity tool that adds blinking and voice lip sync to the avatar Mururu.
