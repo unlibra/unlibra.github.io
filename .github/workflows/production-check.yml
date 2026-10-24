@@ -38,7 +38,7 @@ jobs:
           }
           locs() { curl -sf --max-time 30 "$1" | grep -o '<loc>[^<]*' | cut -c6-; }
 
-          for path in / /robots.txt /sitemap.xml /llms.txt /favicon.ico /apple-touch-icon.png /brand/symbol.svg; do
+          for path in / /robots.txt /sitemap.xml /llms.txt /favicon.ico /favicon.svg /apple-touch-icon.png /brand/symbol.svg; do
             check "$site$path"
           done
           sitemaps=$(locs "$site/sitemap.xml")
