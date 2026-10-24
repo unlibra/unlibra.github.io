@@ -1,0 +1,44 @@
+# Tells IndexNow (Bing and the other search engines that share it) which
+# pages a commit changed, once GitHub Pages has published it
+# (.github/scripts/indexnow.mjs). Covers this repository's own pages and the
+# manuals other repositories push here as built HTML (Mururu Blink &
+# LipSync). Pages that only the theme changed are not sent: search engines
+# keep crawling as before, and IndexNow asks for changed content only.
+#
+# Read-only and without secrets: the key is public (/<key>.txt).
+# Third-party actions: official actions/* only, pinned to the commit of a
+# release tag (the tag is in the comment).
+name: IndexNow
+
+on:
+  # A build of GitHub Pages from main, with the commit it published.
+  page_build:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    name: notify
+    if: github.event.build.status == 'built'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.event.build.commit }}
+          fetch-depth: 2
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+
+      - name: Send the changed pages
+        env:
+          COMMIT: ${{ github.event.build.commit }}
+        run: node .github/scripts/indexnow.mjs "$COMMIT"
