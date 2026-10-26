@@ -1,1 +1,0 @@
-import{G as e,W as t,n,rt as r}from"./chunks/framework.DpaCCLuo.js";var i=JSON.parse(`{"title":"利用規約","description":"","frontmatter":{},"headers":[],"relativePath":"terms/index.md","filePath":"terms/index.md"}`),a={name:`terms/index.md`};function o(n,i,a,o,s,c){return r(),t(`div`,null,[...i[0]||=[e("",4)]])}var s=n(a,[[`render`,o]]);export{i as __pageData,s as default};
