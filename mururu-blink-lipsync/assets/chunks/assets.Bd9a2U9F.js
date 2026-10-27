@@ -1,1 +1,0 @@
-var e=`/mururu-blink-lipsync/images/1-2.webp`,t=`/mururu-blink-lipsync/images/1-3.webp`,n=`/mururu-blink-lipsync/images/1-4.webp`,r=`/mururu-blink-lipsync/images/2.webp`;export{e as i,n,t as r,r as t};

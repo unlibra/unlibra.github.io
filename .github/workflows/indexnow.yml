@@ -1,8 +1,7 @@
 # Tells IndexNow (Bing and the other search engines that share it) which
 # pages a commit changed, once GitHub Pages has published it
-# (.github/scripts/indexnow.mjs). Covers this repository's own pages and the
-# manuals other repositories push here as built HTML (Mururu Blink &
-# LipSync). Pages that only the theme changed are not sent: search engines
+# (.github/scripts/indexnow.mjs). Project manuals deploy and notify from their
+# own repositories. Pages that only the theme changed are not sent: search engines
 # keep crawling as before, and IndexNow asks for changed content only.
 #
 # Read-only and without secrets: the key is public (/<key>.txt).

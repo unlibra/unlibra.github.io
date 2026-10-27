@@ -1,5 +1,5 @@
-// Tells IndexNow which pages of docs.unlibra.com a commit changed: the top
-// page and the manuals pushed here as built HTML (Mururu Blink & LipSync).
+// Tells IndexNow which shared pages of docs.unlibra.com a commit changed.
+// Project manuals deploy and notify from their own repositories.
 // Run by .github/workflows/indexnow.yml after GitHub Pages has published
 // the commit:
 //
