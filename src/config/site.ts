@@ -20,8 +20,6 @@ export const site = {
   name: "unlibra docs",
   /** The line below the heading of the plain list. */
   lead: "Documentation for the open source libraries and tools by unlibra.",
-  /** Shows the buttons that switch the sample between 4 and 10 links. Off on this site. */
-  sample: false,
   /** The words the diorama shows. {name} in opening becomes the name of the link. */
   ui: {
     open: "Open →",
@@ -46,7 +44,6 @@ export const site = {
   mark: string;
   name: string;
   lead: string;
-  sample: boolean;
   ui: Record<
     | "open"
     | "idle"

@@ -98,7 +98,7 @@ const jsonLd = {
       }
     </main>
 
-    <div id="app" data-title={site.name} data-sample={site.sample ? "" : undefined}>
+    <div id="app" data-title={site.name}>
       <canvas id="gl" aria-hidden="true"></canvas>
       <div id="wash" aria-hidden="true"></div>
       <header id="hd">
@@ -109,14 +109,6 @@ const jsonLd = {
       <footer id="ft">
         <p id="cap"><b class="cnum"></b><span class="cname"></span><span class="cdesc"></span></p>
         <p id="hint"></p>
-        <div id="sw" role="group" aria-label="Sample">
-          <span class="t">Sample</span>
-          <span class="seg"
-            ><b>Links</b><span class="bt" data-k="n"
-              >{[4, 5, 6, 7, 8, 9, 10].map((v) => <button type="button" data-v={v}>{v}</button>)}</span
-            ></span
-          >
-        </div>
       </footer>
       <div id="load" role="status" aria-live="polite">{site.ui.loading}</div>
       <div id="toast" role="status" aria-live="polite"></div>

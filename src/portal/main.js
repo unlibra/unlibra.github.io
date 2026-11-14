@@ -17,19 +17,11 @@ var plainEl=document.getElementById('plain'), DALL=[], ALL=[];
               d:d,color:a.getAttribute('data-color'),href:a.getAttribute('href'),arch:a.getAttribute('data-arch')||undefined,li:a.parentNode});
   });
 });
-// 件数を絞る見本。site.ts の sample が true で、見本の10件のときだけ使える（index.astro が #app に data-sample を書く）
-var SAMPLE=document.getElementById('app').hasAttribute('data-sample')&&ALL.length===10;
-var PICK={4:[0,1,2,3],5:[0,1,2,3,4],6:[0,1,2,3,4,5],7:[0,1,2,3,4,5,7],8:[0,1,2,3,4,5,7,8],9:[0,1,2,3,4,5,6,7,8]};
-function pickOf(n){ return n===ALL.length?ALL.map(function(_,ix){return ix;}):PICK[n]; }
-// 確認用：?split=5-3-2 のように書くと、先頭から順に区画へ割り振る（?n より優先）
-var SPLIT=null;
-function makeSet(n){
+// 表に出すリンク。n:通し番号（01〜）　j:区画の中での番号
+function makeSet(){
   var jc=DALL.map(function(){return 0;}), first=[], last=[], links=[];
-  var pick=pickOf(n), force=null;
-  if(SPLIT){ pick=[]; force=[]; SPLIT.forEach(function(c,di){ for(var a=0;a<c;a++){ pick.push(pick.length); force.push(di); } }); }
-  pick.forEach(function(ix,q){
-    var s=ALL[ix], L={}, k; for(k in s)L[k]=s[k];
-    if(force)L.d=force[q];
+  ALL.forEach(function(s,q){
+    var L={}, k; for(k in s)L[k]=s[k];
     L.n=(q<9?'0':'')+(q+1); L.j=jc[L.d]++;
     if(first[L.d]===undefined)first[L.d]=L.n; last[L.d]=L.n;
     links.push(L);
@@ -38,25 +30,10 @@ function makeSet(n){
   DALL.forEach(function(d,i){
     if(jc[i]>0){ d.at=dist.length; dist.push({id:d.id,color:d.color,range:first[i]===last[i]?first[i]:first[i]+'–'+last[i]}); }
   });
-  // 見本で件数を絞っているあいだは、シンプルなポータルも同じ顔ぶれにする（区画は HTML のまま）
-  ALL.forEach(function(s2,ix){ s2.li.hidden=pick.indexOf(ix)<0; });
-  DALL.forEach(function(d){ d.sec.hidden=!d.sec.querySelector('li:not([hidden])'); });
   links.forEach(function(L){ L.d=DALL[L.d].at; }); // d は使っている区画だけの通し番号にする
   return {links:links,dist:dist};
 }
-
-// ---------- サンプルの状態（URL の ?n=4〜10） ----------
-var COUNT=ALL.length;
-(function(){
-  if(!SAMPLE)return;
-  try{
-    var q=new URLSearchParams(location.search), n=parseInt(q.get('n'),10);
-    if(pickOf(n))COUNT=n;
-    var sp=(q.get('split')||'').split('-').map(Number), tot=sp.reduce(function(a,c){return a+c;},0);
-    if(sp.length>=1&&sp.length<=3&&sp.every(function(c){return c>=1&&c===Math.floor(c);})&&tot>=4&&tot<=10){ SPLIT=sp; COUNT=tot; }
-  }catch(_){}
-})();
-var SET=makeSet(COUNT), LINKS=SET.links, DIST=SET.dist, N=LINKS.length;
+var SET=makeSet(), LINKS=SET.links, DIST=SET.dist, N=LINKS.length;
 
 // 建物の部品。models.js は window.PORTAL_ASSETS[pack] を登録する。組み立ての規則は kenney-buildings.js
 var PACK={pack:'kenney-modular',src:'assets/kenney-modular/models.js'};
@@ -75,7 +52,7 @@ var app=document.getElementById('app'), canvas=document.getElementById('gl'),
     hd=document.getElementById('hd'), ft=document.getElementById('ft'),
     cap=document.getElementById('cap'), toastEl=document.getElementById('toast'),
     hint=document.getElementById('hint'), legendEl=document.getElementById('legend'),
-    swEl=document.getElementById('sw'), loadEl=document.getElementById('load');
+    loadEl=document.getElementById('load');
 var capNum=cap.querySelector('.cnum'), capName=cap.querySelector('.cname'), capDesc=cap.querySelector('.cdesc');
 
 var vw=1,vh=1, sel=-1, opening=null, lastTouch=false, GL=null, clearTimer=0, toastTimer=0;
@@ -200,34 +177,8 @@ function measure(){
 
 buildLabels();
 hint.textContent=FINE?UI.hintPointer:UI.hintTouch;
-swEl.hidden=!SAMPLE;
 
-// ---------- サンプル用の切り替え ----------
-function syncButtons(){
-  var bs=swEl.querySelectorAll('button');
-  for(var i=0;i<bs.length;i++){
-    var v=bs[i].getAttribute('data-v');
-    bs[i].setAttribute('aria-pressed',String(Number(v)===COUNT));
-  }
-}
 function setLoading(on){ loadEl.classList.toggle('show',!!on); }
-function setState(n){
-  if(opening)return;
-  if(n===COUNT&&!SPLIT)return;
-  SPLIT=null; COUNT=n;
-  SET=makeSet(COUNT); LINKS=SET.links; DIST=SET.dist; N=LINKS.length;
-  buildLabels(); measure();
-  syncButtons();
-  try{ history.replaceState(null,'',location.pathname+'?n='+COUNT); }catch(_){}
-  setLoading(false);
-  if(GL) GL.build();
-}
-swEl.addEventListener('click',function(e){
-  var bt=e.target.closest?e.target.closest('button'):null;
-  if(!bt)return;
-  setState(Number(bt.getAttribute('data-v')));
-});
-syncButtons();
 
 // ---------- three.js ----------
 function initGL(){

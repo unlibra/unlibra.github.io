@@ -78,21 +78,7 @@ html.gl #plain,html:not(.gl) #app{display:none}
   box-shadow:0 10px 24px rgba(0,0,0,.45);text-align:center}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* サンプル用の切り替え（本番には載せない） */
-#sw[hidden]{display:none}
-#sw{pointer-events:auto;margin-top:7px;display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;padding:5px 8px 6px;
-  border:1px dashed rgba(147,160,200,.7);border-radius:8px;background:rgba(9,13,26,.78);width:fit-content;max-width:100%}
-#sw .t{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--mut)}
-#sw .seg{display:flex;align-items:center;gap:6px}
-#sw .seg b{font-size:11px;font-weight:700;color:var(--mut);white-space:nowrap}
-#sw .bt{display:flex;border:1px solid var(--mut);border-radius:6px;overflow:hidden}
-#sw button{height:32px;min-width:34px;padding:0 10px;font:700 12px/1 var(--jp);color:var(--cream);background:transparent;
-  border:0;border-left:1px solid var(--mut);cursor:pointer;white-space:nowrap;touch-action:manipulation}
-#sw button:first-child{border-left:0}
-#sw button i{font-style:normal}
-#sw button[aria-pressed="true"]{background:var(--cream);color:var(--ink)}
-#sw button:focus-visible{outline:2px solid #fff;outline-offset:-3px}
-@media (max-width:560px){ #sw .t{width:100%} #sw button i{display:none} #sw{gap:4px 10px} #hint{display:none} #load{top:calc(64px + var(--sat))} }
+@media (max-width:560px){ #hint{display:none} #load{top:calc(64px + var(--sat))} }
 #load{position:absolute;left:50%;top:calc(46px + var(--sat));z-index:6;transform:translateX(-50%);pointer-events:none;
   font-size:12px;font-weight:700;color:var(--ink);background:var(--cream);padding:5px 12px;border-radius:99px;
   box-shadow:0 6px 16px rgba(0,0,0,.4);opacity:0;transition:opacity .15s}
