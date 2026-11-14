@@ -1,0 +1,129 @@
+---
+// The portal: a diorama with one building per link. Links are src/content/links/*.md,
+// the site settings src/config/site.ts. The diorama (src/portal/) reads the list of
+// links in <main id="plain">; this page only writes that list from the settings and links.
+import { getCollection } from "astro:content";
+
+import { LIMITS, site } from "../config/site";
+import bootJs from "../portal/boot.js?raw";
+import mainJs from "../portal/main.js?raw";
+import portalCss from "../portal/portal.css?raw";
+
+const links = await getCollection("links");
+
+// Stop the build on counts the diorama cannot lay out
+if (links.length < LIMITS.minLinks || links.length > LIMITS.maxLinks) {
+  throw new Error(`${LIMITS.minLinks} to ${LIMITS.maxLinks} links, not ${links.length}`);
+}
+if (site.sections.length > LIMITS.maxSections) {
+  throw new Error(`${LIMITS.maxSections} sections at most, not ${site.sections.length}`);
+}
+
+const sections = site.sections.map((section) => ({
+  ...section,
+  links: links
+    .filter((link) => link.data.section === section.id)
+    .map((link) => link.data)
+    .sort((a, b) => a.order - b.order),
+}));
+const empty = sections.find((s) => s.links.length === 0);
+if (empty) throw new Error(`Section ${empty.id} has no links`);
+const orders = sections.flatMap((s) => s.links.map((l) => `${s.id}:${l.order}`));
+const dup = orders.find((o, i) => orders.indexOf(o) !== i);
+if (dup) throw new Error(`Two links share an order in a section: ${dup}`);
+
+const SITE_URL = "https://docs.unlibra.com/";
+const description = "Index of projects hosted on docs.unlibra.com";
+// The projects whose documentation this site hosts, for the structured data.
+const hosted = links.filter((link) => link.data.href.startsWith(SITE_URL)).map((link) => link.data);
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "docs.unlibra.com",
+  url: SITE_URL,
+  publisher: { "@type": "Person", name: "unlibra", url: "https://unlibra.com" },
+  hasPart: hosted.map((link) => ({ "@type": "WebSite", name: link.name, url: link.href })),
+};
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>{site.title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={SITE_URL} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- The same OGP image as unlibra.com, for every site on docs.unlibra.com. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="docs.unlibra.com" />
+    <meta property="og:title" content="docs.unlibra.com" />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={SITE_URL} />
+    <meta property="og:image" content="https://unlibra.com/ogp.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline set:html={bootJs} />
+    <style is:inline set:html={portalCss}></style>
+  </head>
+  <body>
+    <!-- The links. The diorama reads them from here; without JavaScript or WebGL, this list is the portal. -->
+    <main id="plain">
+      <header>
+        <h1>{site.name}</h1>
+        <p>{site.lead}</p>
+      </header>
+      {
+        sections.map((section) => (
+          <section data-id={section.id} data-color={section.color} style={`--c:${section.color}`}>
+            <h2>{section.id}</h2>
+            <ul>
+              {section.links.map((link) => (
+                <li>
+                  <a href={link.href} data-color={link.color} data-arch={link.arch}>
+                    <b>{link.name}</b>
+                    <small>{link.category}</small>
+                    <span>{link.description}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </main>
+
+    <div id="app" data-title={site.name} data-sample={site.sample ? "" : undefined}>
+      <canvas id="gl" aria-hidden="true"></canvas>
+      <div id="wash" aria-hidden="true"></div>
+      <header id="hd">
+        <h1><span class="mono">{site.mark}</span><i>／</i>{site.name}</h1>
+        <ul id="legend" aria-label={site.ui.sectionsLabel}></ul>
+      </header>
+      <nav id="labels" aria-label={site.ui.linksLabel}></nav>
+      <footer id="ft">
+        <p id="cap"><b class="cnum"></b><span class="cname"></span><span class="cdesc"></span></p>
+        <p id="hint"></p>
+        <div id="sw" role="group" aria-label="Sample">
+          <span class="t">Sample</span>
+          <span class="seg"
+            ><b>Links</b><span class="bt" data-k="n"
+              >{[4, 5, 6, 7, 8, 9, 10].map((v) => <button type="button" data-v={v}>{v}</button>)}</span
+            ></span
+          >
+        </div>
+      </footer>
+      <div id="load" role="status" aria-live="polite">{site.ui.loading}</div>
+      <div id="toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <script is:inline type="application/json" id="portal-ui" set:html={JSON.stringify(site.ui).replace(/</g, "\\u003c")} />
+
+    <script is:inline set:html={mainJs} />
+  </body>
+</html>

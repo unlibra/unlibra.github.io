@@ -1,0 +1,92 @@
+# Builds the site with Astro and deploys it to GitHub Pages, then tells
+# IndexNow (Bing and the other search engines that share it) which pages the
+# deploy changed (.github/scripts/indexnow.mjs). Project manuals deploy from
+# their own repositories.
+#
+# Third-party actions: official actions/* only, pinned to the commit of a
+# release tag (the tag is in the comment). No secrets: the IndexNow key is
+# public (/<key>.txt).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # The pages as they are live now, to compare with after the deploy.
+      - name: Save the live pages
+        run: node .github/scripts/indexnow.mjs snapshot dist live
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: indexnow
+          path: |
+            dist/**/*.html
+            live/
+          if-no-files-found: error
+          include-hidden-files: false
+
+  deploy:
+    name: deploy
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  indexnow:
+    name: indexnow
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .node-version
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: indexnow
+
+      - name: Send the changed pages
+        run: node .github/scripts/indexnow.mjs submit dist live
