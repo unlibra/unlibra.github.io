@@ -4,15 +4,17 @@
 // from the page itself.
 import { expect, test } from "@playwright/test";
 
+import { site } from "../src/config/site.ts";
+
 const WIDTHS = [375, 1280];
 /** The system's color scheme: the page follows it (DESIGN.md 7.1). */
 const SCHEMES = ["light", "dark"];
 
 /** Opens the top page at `width` and waits for the web fonts. */
-const open = async (page, width, colorScheme) => {
+const open = async (page, path, width, colorScheme) => {
   await page.emulateMedia({ colorScheme });
   await page.setViewportSize({ width, height: 900 });
-  await page.goto("/");
+  await page.goto(path);
   await page.evaluate(() => document.fonts.ready);
 };
 
@@ -82,10 +84,11 @@ const contrastErrors = (root) =>
     return errors;
   }, helpers.toString());
 
+for (const { path } of site.pages)
 for (const colorScheme of SCHEMES)
 for (const width of WIDTHS) {
-  test.describe(`${colorScheme}, ${width}px`, () => {
-    test.beforeEach(async ({ page }) => open(page, width, colorScheme));
+  test.describe(`${path}, ${colorScheme}, ${width}px`, () => {
+    test.beforeEach(async ({ page }) => open(page, path, width, colorScheme));
 
     test("7.2: the section dots reach 3:1 on the background", async ({ page }) => {
       const ratios = await page.evaluate((helpersSource) => {

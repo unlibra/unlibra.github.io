@@ -16,13 +16,13 @@ docs.unlibra.com と yorucha.link のトップページに共通の、見た目�
 
 | 共通（同じファイル）                                                                 | サイトごと                                                         |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `src/pages/index.astro`、`src/styles/index.css`、`src/content.config.ts`             | `src/config/site.ts` の値（型は共通）                              |
+| `src/pages/[...path].astro`、`src/styles/index.css`、`src/content.config.ts`        | `src/config/site.ts` の値（型は共通）、`src/assets/profile/`        |
 | `src/assets/logos/`、`scripts/`、`astro.config.mjs`、`LICENSES/`                     | `src/content/projects/*.md`（プロジェクトがないサイトは空）        |
 | `tests/`、`playwright.config.js`、`.github/workflows/test.yml`                       | `public/`（アイコン、共有の画像、`robots.txt`、サイトマップ、`llms.txt`） |
 | `.github/workflows/production-check.yml`（`SITE` と `FILES` だけ違う）               | デプロイの仕方（docs.unlibra.com は GitHub Pages、yorucha.link は Cloudflare Workers Builds）と、それに付くファイル |
 | この `DESIGN.md`                                                                     | README                                                             |
 
-`src/config/site.ts` で決めるのは、言語、URL、名前（h1 と題）、リード（任意）、説明文、作者、ページの種類、アイコン、共有の画像、`robots` のタグ、IndexNow の鍵（任意）、区画です。区画は「プロジェクトの区画」（`src/content/projects/*.md` を出す）か「リンクの区画」（ほかのサイトへのリンクを出す）のどちらかです。中身を足すだけで、どちらのサイトにも同じ部品が出ます。
+`src/config/site.ts` は、サイトのページ（`pages`）と IndexNow の鍵（任意）を持ちます。ページごとに決めるのは、ビルドでの置き場所（`path`）、言語、URL、名前（h1 と題）、リード（任意）、説明文、作者、ページの種類、アイコン、共有の画像、`robots` のタグ、プロフィールの見出し（任意）、区画です。docs.unlibra.com のページは1つ（`/`）、yorucha.link は2つ（`/` と、vrc.yorucha.link で出す `/vrc/`）です。区画は「プロジェクトの区画」（`src/content/projects/*.md` を出す）か「リンクの区画」（ほかのサイトへのリンクを出す）のどちらかです。中身を足すだけで、どちらのサイトにも同じ部品が出ます。
 
 # 第1部 どこでも使える規則
 
@@ -212,8 +212,9 @@ USWDS からは考え方だけを借ります。見た目（書体、色、大�
 
 ### 9.1 ページの見出し
 
-- h1 はサイトの名前（`name`）で、ブラウザのタブの題と同じです。その下にリード（`lead`）を置きます。リードのないサイトは h1 だけです。
-- 見出しにロゴやアバターは置きません。サイトの印は favicon と共有の画像に任せます。
+- h1 はページの名前（`name`）で、ブラウザのタブの題と同じです。その下にリード（`lead`）を置きます。リードのないページは h1 だけです。
+- 見出しにロゴは置きません。サイトの印は favicon と共有の画像に任せます。
+- **プロフィールの見出し（任意）：** ページの `profile` に、横長の画像（バナー、3:1）と丸いアイコンを持てます（`src/assets/profile/` のファイル）。バナーの下端にアイコン（96px、地の色の 4px の縁）を半分重ね、その下に h1 を置きます。Xのプロフィールと同じ形です。バナーは 640px 未満で画面の端まで、640px 以上で中身の幅に角丸 8px で収めます。使っているのは vrc.yorucha.link だけです（Xの @yorucha_ のヘッダーとアイコン）。
 
 ### 9.2 プロジェクトの行
 
@@ -225,7 +226,7 @@ USWDS からは考え方だけを借ります。見た目（書体、色、大�
 ### 9.3 リンクの行
 
 - ほかのサイトへのリンクです（`src/config/site.ts` のリンクの区画）。プロジェクトの行と同じ形で、番号の位置にロゴを置き、名前だけを出します。番号・説明は置きません。リンクは `rel="me"` です。
-- ロゴは名前と同じ 18px で、`src/assets/logos/` のファイルを使います（github、unlibra、x、booth、youtube）。ほかのロゴ名を書くと型の検査で止まります。YouTube だけは unlibra.com のフッターと同じ Tabler Icons の `brand-youtube`（Filled）を赤（#ff0000）にしたもので、ほかは各サービスの公式のファイルです。
+- ロゴは名前と同じ 18px で、`src/assets/logos/` のファイルを使います（github、unlibra、x、booth、youtube、vrchat、vrcmeikan）。VRChat と VRC名鑑はサイトのアイコン（96px の PNG）です。ほかのロゴ名を書くと型の検査で止まります。YouTube だけは unlibra.com のフッターと同じ Tabler Icons の `brand-youtube`（Filled）を赤（#ff0000）にしたもので、ほかは各サービスの公式のファイルです。
 - **例外：** YouTube の公式のアイコンは、高さ 100px 以上で使う決まりがあり、18px では守れません。決まりを守れない公式のアイコンを使うより、公式でないことがはっきりした形にします。
 - **例外：** X のマークは箱の角まで届くので、同じ大きさでは丸や四角のロゴより大きく見えます。16px にして、中心をほかのロゴとそろえます。
 
@@ -241,8 +242,8 @@ USWDS からは考え方だけを借ります。見た目（書体、色、大�
 どちらのサイトも、同じタグとファイルを持ちます。
 
 - **タグ：** 題、説明、正規の URL、作者、`robots`、Open Graph（小さいカード、`twitter:card summary`）、X のカード、構造化データ。構造化データは、サイト（`WebSite`）と、ページ（`CollectionPage` は行の一覧、`ProfilePage` は持ち主とリンクの `sameAs`）です。
-- **ファイル：** `robots.txt`、`sitemap.xml`、`llms.txt`、`third-party-licenses.txt`。
-- 検索に出すかどうかは、`src/config/site.ts` の `robots` と `public/robots.txt` の2つだけで切り替えます。`noindex` のときは、`robots.txt` で Twitterbot（X のカードのため）以外のクローラーをすべて止めます。`noindex` でないときは、すべてのクローラーを入れ、サイトマップを名指しします。2つが食い違うとテストが止まります。
+- **ファイル：** `robots.txt`、`sitemap.xml`、`llms.txt`、`third-party-licenses.txt`。`/` 以外のページは、自分の `robots.txt`、`sitemap.xml`、`llms.txt`、アイコン、共有の画像を `public/` + `path` に持ちます。yorucha.link では Worker（`worker/index.js`）が、vrc.yorucha.link に `/vrc/` の中身をルートとして出し、`yorucha.link/vrc/` は vrc.yorucha.link へ転送します（ページの住所を1つにするため）。
+- 検索に出すかどうかは、ページごとに `src/config/site.ts` の `robots` と、そのページの `robots.txt` の2つだけで切り替えます。`noindex` のときは、`robots.txt` で Twitterbot（X のカードのため）以外のクローラーをすべて止めます。`noindex` でないときは、すべてのクローラーを入れ、サイトマップを名指しします。2つが食い違うとテストが止まります。
 - IndexNow は使うサイトだけが鍵（`indexNowKey`）を持ちます。docs.unlibra.com は鍵を持ち、デプロイのあとにトップページを送ります（`.github/scripts/indexnow.mjs`。`noindex` のページは送らない）。各プロジェクトのマニュアルは、同じ鍵でそれぞれのリポジトリから自分のページを送ります。yorucha.link は IndexNow を使いません。
 
 ## 11. 文言と言語

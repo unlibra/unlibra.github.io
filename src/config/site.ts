@@ -1,9 +1,9 @@
-// What this site puts in the shared page (DESIGN.md 0). docs.unlibra.com and
+// What this site puts in the shared pages (DESIGN.md 0). docs.unlibra.com and
 // yorucha.link have the same page, styles, scripts and tests; only this file,
-// src/content/projects/*.md and public/ differ.
+// src/content/projects/*.md, src/assets/profile/ and public/ differ.
 
-/** The logos of src/assets/logos/<logo>.svg. */
-export type Logo = "github" | "unlibra" | "x" | "booth" | "youtube";
+/** The logos of src/assets/logos/<logo>.svg (vrcmeikan: .png). */
+export type Logo = "github" | "unlibra" | "x" | "booth" | "youtube" | "vrchat" | "vrcmeikan";
 
 /** The colors a section can take: Japanese traditional colors (DESIGN.md 7.2). */
 export type SectionColor = "shinbashi" | "ouni" | "fujimurasaki";
@@ -24,7 +24,14 @@ export type Section =
   | { kind: "projects"; label: string; color: SectionColor }
   | { kind: "links"; label: string; color: SectionColor; links: readonly LinkRow[] };
 
-export type Site = {
+/**
+ * A page of the site. The build writes it at `path`. On yorucha.link, the
+ * Worker (worker/index.js) serves "/vrc/" at vrc.yorucha.link, with its own
+ * files under public/vrc/.
+ */
+export type Page = {
+  /** Where the build writes the page: "/" or "/<name>/". */
+  path: "/" | `/${string}/`;
   lang: "en" | "ja";
   /** The locale for Open Graph. */
   ogLocale: "en_US" | "ja_JP";
@@ -46,61 +53,77 @@ export type Site = {
   /** The icons in public/. The SVG one is required. */
   icons: { svg: `/${string}.svg`; ico?: `/${string}.ico`; appleTouch?: `/${string}.png` };
   /** The share image, on the small card (twitter:card summary). */
-  ogImage: { url: `https://${string}`; type: "image/png"; width: number; height: number; alt: string };
+  ogImage: { url: `https://${string}`; type: "image/png" | "image/jpeg"; width: number; height: number; alt: string };
   /**
-   * The robots tag. With "noindex", public/robots.txt must keep every crawler
+   * The robots tag. With "noindex", the page's robots.txt (public/ + path) must keep every crawler
    * but Twitterbot out; without it, robots.txt must let them in and name the
    * sitemap (tests/seo.spec.js). These two are all that differ between a page
    * in search and one out of it (DESIGN.md 10).
    */
   robots: string;
   /**
-   * The IndexNow key, when the site uses IndexNow: public/<key>.txt holds it
-   * (tests/seo.spec.js). Left out, the site has no key file.
+   * A profile header above the heading: a banner (3:1) and a round icon
+   * (DESIGN.md 9.1), the names of files in src/assets/profile/. Left out, the
+   * page has none.
    */
-  indexNowKey?: string;
+  profile?: { banner: string; avatar: string };
   /** The sections, in this order. */
   sections: readonly Section[];
 };
 
+export type Site = {
+  /**
+   * The IndexNow key, when the site uses IndexNow: public/<key>.txt holds it
+   * (tests/seo.spec.js). Left out, the site has no key file.
+   */
+  indexNowKey?: string;
+  /** The pages. One of them is at "/". */
+  pages: readonly Page[];
+};
+
 export const site: Site = {
-  lang: "en",
-  ogLocale: "en_US",
-  url: "https://docs.unlibra.com/",
-  name: "unlibra Docs",
-  lead: "Guides and references for the libraries and tools by unlibra.",
-  description:
-    "Guides and references for the libraries and tools by unlibra: tkinter-unblur, i18n-tiny and Mururu Blink & LipSync.",
-  author: {
-    name: "unlibra",
-    url: "https://unlibra.com",
-    sameAs: ["https://github.com/unlibra", "https://unlibra.booth.pm/"],
-  },
-  page: "CollectionPage",
-  // The same icons as unlibra.com (the files are copies of its own).
-  icons: { svg: "/favicon.svg", ico: "/favicon.ico", appleTouch: "/apple-touch-icon.png" },
-  // unlibra.com's image: the symbol is in the middle, so the small card's square crop keeps it whole.
-  ogImage: {
-    url: "https://unlibra.com/ogp.png",
-    type: "image/png",
-    width: 1200,
-    height: 630,
-    alt: "The unlibra symbol",
-  },
-  robots: "index, follow, max-snippet:-1, max-image-preview:large",
   // .github/scripts/indexnow.mjs sends the top page with it. The project manuals
   // (i18n-tiny, tkinter-unblur, mururu-blink-lipsync) send their own pages from
   // their repositories with the same key, so the file must stay.
   indexNowKey: "67426e8c4c044cef96ebc2f901da0154",
-  sections: [
-    { kind: "projects", label: "PROJECTS", color: "shinbashi" },
+  pages: [
     {
-      kind: "links",
-      label: "SEE ALSO",
-      color: "ouni",
-      links: [
-        { name: "Portfolio", href: "https://unlibra.com/", logo: "unlibra" },
-        { name: "GitHub", href: "https://github.com/unlibra", logo: "github" },
+      path: "/",
+      lang: "en",
+      ogLocale: "en_US",
+      url: "https://docs.unlibra.com/",
+      name: "unlibra Docs",
+      lead: "Guides and references for the libraries and tools by unlibra.",
+      description:
+        "Guides and references for the libraries and tools by unlibra: tkinter-unblur, i18n-tiny and Mururu Blink & LipSync.",
+      author: {
+        name: "unlibra",
+        url: "https://unlibra.com",
+        sameAs: ["https://github.com/unlibra", "https://unlibra.booth.pm/"],
+      },
+      page: "CollectionPage",
+      // The same icons as unlibra.com (the files are copies of its own).
+      icons: { svg: "/favicon.svg", ico: "/favicon.ico", appleTouch: "/apple-touch-icon.png" },
+      // unlibra.com's image: the symbol is in the middle, so the small card's square crop keeps it whole.
+      ogImage: {
+        url: "https://unlibra.com/ogp.png",
+        type: "image/png",
+        width: 1200,
+        height: 630,
+        alt: "The unlibra symbol",
+      },
+      robots: "index, follow, max-snippet:-1, max-image-preview:large",
+      sections: [
+        { kind: "projects", label: "PROJECTS", color: "shinbashi" },
+        {
+          kind: "links",
+          label: "SEE ALSO",
+          color: "ouni",
+          links: [
+            { name: "Portfolio", href: "https://unlibra.com/", logo: "unlibra" },
+            { name: "GitHub", href: "https://github.com/unlibra", logo: "github" },
+          ],
+        },
       ],
     },
   ],

@@ -1,9 +1,9 @@
-# Checks the live site every day: the files at the root (FILES), and every page
-# in /sitemap.xml (a sitemap, or an index of sitemaps) answer 200. On
-# docs.unlibra.com, the index lists the sitemaps of the projects, so a broken
+# Checks the live site every day: on each host of SITES, the files at the root
+# (FILES), and every page in /sitemap.xml (a sitemap, or an index of sitemaps)
+# answer 200. On docs.unlibra.com, the index lists the sitemaps of the projects, so a broken
 # deploy of any project shows up too. A failed run is mailed by GitHub to the
 # user who last changed the schedule. The same file in docs.unlibra.com and
-# yorucha.link but for SITE and FILES.
+# yorucha.link but for SITES and FILES.
 #
 # GitHub turns off scheduled workflows of a public repository after 60 days
 # without activity; it mails a warning first.
@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 env:
-  SITE: https://docs.unlibra.com
+  SITES: https://docs.unlibra.com
   FILES: / /robots.txt /sitemap.xml /llms.txt /third-party-licenses.txt /favicon.ico /favicon.svg /apple-touch-icon.png /brand/symbol.svg
 
 jobs:
@@ -43,6 +43,7 @@ jobs:
           }
           locs() { curl -sf --max-time 30 "$1" | grep -o '<loc>[^<]*' | cut -c6-; }
 
+          for SITE in $SITES; do
           for path in $FILES; do
             check "$SITE$path"
           done
@@ -63,5 +64,6 @@ jobs:
             for page in $pages; do
               check "$page"
             done
+          done
           done
           exit "$failed"

@@ -1,0 +1,230 @@
+---
+// The pages shared by docs.unlibra.com and yorucha.link: the same file in both
+// repositories. One page for each of site.pages in src/config/site.ts, at its
+// path. What a page shows is its settings, src/content/projects/*.md and
+// src/assets/profile/; how it looks is DESIGN.md (tests/design.spec.js).
+import { getCollection } from "astro:content";
+
+// DM Mono for the section headings (500) and the numbers (400). Noto Sans JP
+// is cut down to the shown characters after the build
+// (scripts/noto-sans-jp-subset.mjs): it is not imported here.
+import "@fontsource/dm-mono/400.css";
+import "@fontsource/dm-mono/500.css";
+
+import booth from "../assets/logos/booth.svg";
+import github from "../assets/logos/github.svg";
+import unlibra from "../assets/logos/unlibra.svg";
+import x from "../assets/logos/x.svg";
+import vrchat from "../assets/logos/vrchat.png";
+import vrcmeikan from "../assets/logos/vrcmeikan.png";
+import youtube from "../assets/logos/youtube.svg";
+import { type Logo, type Page, site } from "../config/site";
+import "../styles/index.css";
+
+export function getStaticPaths() {
+  return site.pages.map((page) => ({
+    params: { path: page.path === "/" ? undefined : page.path.slice(1, -1) },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props as { page: Page };
+
+/** Imported, so they get hashed names under /_astro/. A Logo without a file fails the type check. */
+const LOGOS: Record<Logo, { src: string }> = {
+  booth,
+  github,
+  unlibra,
+  vrchat,
+  vrcmeikan,
+  x,
+  youtube,
+};
+
+// The profile header's files (DESIGN.md 9.1): src/assets/profile/<name>.
+const PROFILE_FILES = import.meta.glob<{ default: ImageMetadata }>("../assets/profile/*.{jpg,jpeg,png,webp}", {
+  eager: true,
+});
+const profileImage = (name: string) => {
+  const file = PROFILE_FILES[`../assets/profile/${name}`];
+  if (!file) throw new Error(`src/assets/profile/${name} does not exist`);
+  return file.default;
+};
+const profile = page.profile && { banner: profileImage(page.profile.banner), avatar: profileImage(page.profile.avatar) };
+
+// The projects, read only when a section lists them; a project file with no
+// section to show it, or a section with no project, stops the build. Only one
+// section of the whole site can list them.
+const siteProjectSections = site.pages.flatMap((p) => p.sections).filter((s) => s.kind === "projects").length;
+if (siteProjectSections > 1) throw new Error("Only one section can list the projects");
+const projectSections = page.sections.filter((s) => s.kind === "projects").length;
+const projectFiles = Object.keys(import.meta.glob("../content/projects/**/*.md"));
+if (siteProjectSections === 0 && projectFiles.length > 0) {
+  throw new Error("src/content/projects/ has projects, but no section lists them");
+}
+const projects =
+  projectSections === 1
+    ? (await getCollection("projects")).map((p) => p.data).sort((a, b) => a.order - b.order)
+    : [];
+if (projectSections === 1 && projects.length === 0) {
+  throw new Error("A section lists the projects, but src/content/projects/ has none");
+}
+const orders = projects.map((p) => p.order);
+const dup = orders.find((o, i) => orders.indexOf(o) !== i);
+if (dup !== undefined) throw new Error(`Two projects share order ${dup}`);
+
+/** Every row of the page, in order: the names and addresses. */
+const rows = page.sections.flatMap((s) =>
+  s.kind === "projects"
+    ? projects.map((p) => ({ name: p.name, url: p.href }))
+    : s.links.map((l) => ({ name: l.name, url: l.href })),
+);
+
+// The structured data: the site, and this page with what it is about. A profile
+// page is about its owner (with every link as sameAs); a collection page lists
+// its rows.
+const owner = { "@type": "Person", ...page.author };
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${page.url}#website`,
+      name: page.name,
+      url: page.url,
+      description: page.description,
+      inLanguage: page.lang,
+      publisher: owner,
+      author: owner,
+    },
+    {
+      "@type": page.page,
+      "@id": `${page.url}#page`,
+      url: page.url,
+      name: page.name,
+      description: page.description,
+      inLanguage: page.lang,
+      isPartOf: { "@id": `${page.url}#website` },
+      primaryImageOfPage: { "@type": "ImageObject", url: page.ogImage.url },
+      mainEntity:
+        page.page === "ProfilePage"
+          ? { ...owner, sameAs: [...new Set([...page.author.sameAs, ...rows.map((r) => r.url)])] }
+          : {
+              "@type": "ItemList",
+              itemListElement: rows.map((r, i) => ({ "@type": "ListItem", position: i + 1, name: r.name, url: r.url })),
+            },
+    },
+  ],
+};
+
+// The arrows: Tabler Icons (outline), chevron-right for a page on this site and
+// arrow-up-right for another page. MIT License, Copyright (c) 2020-2026 Paweł Kuna:
+// LICENSES/Tabler-MIT.txt. DESIGN.md 9.4.
+const TABLER = {
+  fill: "none",
+  stroke: "currentColor",
+  "stroke-width": "2",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round",
+  "aria-hidden": "true",
+} as const;
+---
+
+<!doctype html>
+<html lang={page.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{page.name}</title>
+    <meta name="description" content={page.description} />
+    <meta name="author" content={page.author.name} />
+    <meta name="robots" content={page.robots} />
+    <link rel="canonical" href={page.url} />
+    <link rel="author" href={page.author.url} />
+    <!-- Light or dark as the system is set (DESIGN.md 7.1): the page's background -->
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#333842" media="(prefers-color-scheme: dark)" />
+
+    {page.icons.ico && <link rel="icon" href={page.icons.ico} sizes="32x32" />}
+    <link rel="icon" href={page.icons.svg} type="image/svg+xml" />
+    {page.icons.appleTouch && <link rel="apple-touch-icon" href={page.icons.appleTouch} />}
+
+    <!-- Share cards: the small card -->
+    <meta property="og:type" content={page.page === "ProfilePage" ? "profile" : "website"} />
+    <meta property="og:site_name" content={page.name} />
+    <meta property="og:title" content={page.name} />
+    <meta property="og:description" content={page.description} />
+    <meta property="og:url" content={page.url} />
+    <meta property="og:locale" content={page.ogLocale} />
+    <meta property="og:image" content={page.ogImage.url} />
+    <meta property="og:image:type" content={page.ogImage.type} />
+    <meta property="og:image:width" content={String(page.ogImage.width)} />
+    <meta property="og:image:height" content={String(page.ogImage.height)} />
+    <meta property="og:image:alt" content={page.ogImage.alt} />
+    {page.page === "ProfilePage" && <meta property="profile:username" content={page.author.name} />}
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={page.name} />
+    <meta name="twitter:description" content={page.description} />
+    <meta name="twitter:image" content={page.ogImage.url} />
+    <meta name="twitter:image:alt" content={page.ogImage.alt} />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, "\\u003c")} />
+  </head>
+  <body>
+    <main>
+      <header class:list={[profile && "profile"]}>
+        {
+          profile && (
+            <>
+              <img class="banner" src={profile.banner.src} width={profile.banner.width} height={profile.banner.height} alt="" />
+              <img class="avatar" src={profile.avatar.src} width={profile.avatar.width} height={profile.avatar.height} alt="" />
+            </>
+          )
+        }
+        <h1>{page.name}</h1>
+        {page.lead && <p>{page.lead}</p>}
+      </header>
+
+      {
+        page.sections.map((section) => (
+          <section class={section.kind} style={`--c: var(--${section.color})`}>
+            <h2>{section.label}</h2>
+            {section.kind === "projects" ? (
+              <ol>
+                {projects.map((p) => (
+                  <li>
+                    <a href={p.href}>
+                      <b>{p.name}</b>
+                      <span class="desc">{p.description}</span>
+                      <svg class="go" viewBox="0 0 24 24" {...TABLER}>
+                        <path d="M9 6l6 6l-6 6" />
+                      </svg>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <ul>
+                {section.links.map((l) => (
+                  <li>
+                    <a href={l.href} rel="me">
+                      <img class:list={["logo", `logo-${l.logo}`]} src={LOGOS[l.logo].src} width="18" height="18" alt="" />
+                      <b>{l.name}</b>
+                      <svg class="go" viewBox="0 0 24 24" {...TABLER}>
+                        <path d="M17 7l-10 10" />
+                        <path d="M8 7l9 0l0 9" />
+                      </svg>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))
+      }
+    </main>
+  </body>
+</html>
