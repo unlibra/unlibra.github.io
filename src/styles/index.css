@@ -1,15 +1,26 @@
-/* One list of links. The section names sit in a column on the left; each row holds the
-   number, name, category and description. Rules only, no boxes. Hovering or focusing a row
-   shows the link's own color (--lc) as a bar on the left and a pale ground. Light only. */
+/* The top page: the projects, then links to other sites. The rules and the values are
+   DESIGN.md; tests/design.spec.js checks them. Light only. */
 :root {
   color-scheme: light;
-  --bg: #f6f7f9;
-  --fg: #141821;
-  --mut: #5c6474;
-  --faint: #8b92a0;
-  --line: #e2e5eb;
-  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* DESIGN.md 7.1 */
+  --gray-900: #111827;
+  --gray-600: #4b5563;
+  --gray-500: #6b7280;
+  --sora-deep: #4d9fd6;
+  --catch: #ee7800;
+  --primary: #277db2;
+  --link-hover: #005d91;
+  /* DESIGN.md 6.1: as on unlibra.com */
+  --sans: "Noto Sans JP Variable", sans-serif;
+  --mono: "DM Mono", monospace;
+  /* DESIGN.md 8.1: the side margin */
+  --side: 24px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --side: 32px;
+  }
 }
 
 * {
@@ -19,195 +30,242 @@
 }
 
 html {
-  background: var(--bg);
-  color: var(--fg);
+  background: #fff;
+  color: var(--gray-600);
   font-family: var(--sans);
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
 }
 
 main {
-  max-width: 1120px;
+  width: min(880px, 100% - var(--side) * 2);
   margin: 0 auto;
-  padding: clamp(40px, 11vh, 120px) 32px 80px;
-  counter-reset: link;
+  padding: 32px 0 64px;
 }
 
+/* The heading, in the center */
 header {
-  margin-bottom: 44px;
+  margin-bottom: 40px;
+  text-align: center;
 }
 
 h1 {
-  font-size: 32px;
-  font-weight: 650;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  font-size: 28px;
+  line-height: 44px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--gray-900);
 }
 
 header p {
-  margin-top: 10px;
-  font-size: 15px;
-  color: var(--mut);
+  margin-top: 8px;
+  font-size: 16px;
+  line-height: 28px;
 }
 
+/* A section: its heading above its rows, or on the left from 1024px */
 section {
+  --c: var(--sora-deep);
   display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 0 24px;
-  border-top: 1.5px solid var(--fg);
-  margin-top: 36px;
+  align-items: baseline;
 }
 
-section:first-of-type {
-  margin-top: 0;
+section + section {
+  margin-top: 32px;
+}
+
+.see-also {
+  --c: var(--catch);
 }
 
 h2 {
-  display: flex;
-  align-items: center;
-  align-self: start;
-  gap: 9px;
-  padding-top: 21px;
-  font: 600 11px/1 var(--mono);
-  letter-spacing: 0.16em;
+  padding-bottom: 8px;
+  font: 500 14px/24px var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-900);
 }
 
 h2::before {
   content: "";
-  flex: none;
+  display: inline-block;
   width: 8px;
   height: 8px;
+  margin-right: 8px;
   border-radius: 50%;
+  vertical-align: 1px;
   background: var(--c);
 }
 
+ol,
 ul {
   list-style: none;
 }
 
-li {
-  counter-increment: link;
-}
-
-li a {
+/* A row: one link. It reaches 12px out on both sides, so its text lines up with the
+   heading and its hover ground has room around the text. */
+section a {
   display: grid;
-  grid-template-columns: 2.2em 12.5em 7em 1fr 1.4em;
-  gap: 0 16px;
-  align-items: baseline;
-  padding: 16px 12px;
+  gap: 0 12px;
+  min-height: 44px;
+  margin: 0 -12px;
+  padding: 12px;
   color: inherit;
   text-decoration: none;
-  border-bottom: 1px solid var(--line);
-  transition:
-    background-color 0.15s,
-    box-shadow 0.15s;
+  border-radius: 8px;
+  transition: background-color 0.15s;
 }
 
-li:last-child a {
-  border-bottom: 0;
-}
-
-li a::before {
-  content: counter(link, decimal-leading-zero);
-  font: 500 11px var(--mono);
-  color: var(--faint);
+section a b {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 600;
+  color: var(--gray-900);
   transition: color 0.15s;
 }
 
-li a::after {
-  content: "\2192";
+.go {
+  width: 16px;
+  height: 16px;
   justify-self: end;
-  font-size: 15px;
-  line-height: 1;
-  color: var(--faint);
+  align-self: center;
+  color: var(--gray-500);
   transition:
     transform 0.2s,
     color 0.15s;
 }
 
-li a b {
-  font-size: 16.5px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+section a:hover,
+section a:focus-visible {
+  background: color-mix(in srgb, var(--c) 8%, #fff);
 }
 
-li a small {
-  font: 500 11px var(--mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--mut);
+section a:hover b,
+section a:focus-visible b {
+  color: var(--link-hover);
 }
 
-li a span {
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--mut);
+section a:hover .go,
+section a:focus-visible .go {
+  color: var(--gray-900);
 }
 
-li a:hover,
-li a:focus-visible {
-  background: color-mix(in srgb, var(--lc, var(--fg)) 9%, var(--bg));
-  box-shadow: inset 3px 0 0 var(--lc, var(--fg));
-}
-
-li a:hover::before,
-li a:focus-visible::before {
-  color: var(--fg);
-}
-
-li a:hover::after,
-li a:focus-visible::after {
-  transform: translateX(4px);
-  color: var(--fg);
-}
-
-li a:focus-visible {
-  outline: 2px solid var(--fg);
+section a:focus-visible {
+  outline: 2px solid var(--primary);
   outline-offset: -2px;
 }
 
-@media (max-width: 700px) {
+/* The projects: number, name, description, chevron. Under 768px the description
+   goes under the name. */
+.projects ol {
+  counter-reset: project;
+}
+
+.projects li {
+  counter-increment: project;
+}
+
+.projects a {
+  grid-template-columns: 32px 1fr 24px;
+  align-items: baseline;
+}
+
+.projects a::before {
+  content: counter(project, decimal-leading-zero);
+  font: 400 14px/24px var(--mono);
+}
+
+.projects .desc {
+  grid-column: 2;
+  font-size: 16px;
+  line-height: 28px;
+}
+
+.projects .go {
+  grid-column: 3;
+  grid-row: 1 / 3;
+}
+
+/* The links to other sites: the logo where the number is, and the name */
+.see-also a {
+  grid-template-columns: 32px 1fr 24px;
+  align-items: center;
+}
+
+.logo {
+  display: block;
+  width: 18px;
+  height: 18px;
+  color: var(--gray-900);
+}
+
+@media (min-width: 640px) {
   main {
-    padding: 32px 20px 56px;
+    padding-top: 96px;
   }
 
   header {
-    margin-bottom: 32px;
+    margin-bottom: 64px;
+  }
+
+  section + section {
+    margin-top: 48px;
   }
 
   h1 {
-    font-size: 27px;
+    font-size: 36px;
+    line-height: 52px;
+  }
+}
+
+@media (min-width: 768px) {
+  section a {
+    gap: 0 16px;
+    padding: 16px 12px;
   }
 
+  .projects a {
+    grid-template-columns: 32px 224px 1fr 24px;
+  }
+
+  .projects .desc {
+    grid-column: 3;
+  }
+
+  .projects .go {
+    grid-column: 4;
+    grid-row: 1;
+  }
+}
+
+@media (min-width: 1024px) {
   section {
-    grid-template-columns: 1fr;
-    margin-top: 28px;
+    grid-template-columns: 144px 1fr;
+    gap: 0 24px;
   }
 
   h2 {
-    padding: 16px 0 4px;
+    padding-bottom: 0;
+  }
+}
+
+/* The arrows move only when motion is welcome (DESIGN.md 5.6) */
+@media (prefers-reduced-motion: no-preference) {
+  .projects a:hover .go,
+  .projects a:focus-visible .go {
+    transform: translateX(4px);
   }
 
-  li a {
-    grid-template-columns: 2.2em 1fr auto;
-    gap: 0 12px;
-    padding: 14px 6px;
-  }
-
-  li a::after {
-    display: none;
-  }
-
-  li a span {
-    grid-column: 2 / -1;
-    margin-top: 3px;
+  .see-also a:hover .go,
+  .see-also a:focus-visible .go {
+    transform: translate(2px, -2px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  li a,
-  li a::before,
-  li a::after {
+  section a,
+  section a b,
+  .go {
     transition: none;
   }
 }

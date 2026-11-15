@@ -1,6 +1,6 @@
 # docs.unlibra.com
 
-> Documentation for the open source libraries and tools by unlibra (https://unlibra.com).
+> Guides and references for the libraries and tools by unlibra (https://unlibra.com).
 
 Each project's documentation has its own llms.txt with every page, and llms-full.txt with the full text.
 

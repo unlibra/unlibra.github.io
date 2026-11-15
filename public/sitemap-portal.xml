@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The top page of docs.unlibra.com. The projects' pages are in their own sitemaps. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://docs.unlibra.com/</loc>
+  </url>
+</urlset>

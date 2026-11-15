@@ -2,30 +2,21 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
-import { site } from "./config/site";
-
-const sectionIds = site.sections.map((s) => s.id) as [string, ...string[]];
-
-// One file per link. Every field is required, so a missing field or an unknown
-// section fails the build.
-const links = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/links" }),
+// One file per project whose documentation this site hosts. Every field is
+// required, so a missing field fails the build. Links to other sites (GitHub,
+// the portfolio) are not projects: they are site.seeAlso in src/config/site.ts.
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
   schema: z.object({
     /** The name. */
     name: z.string().min(1),
-    /** The kind, shown small next to the name. */
-    category: z.string().min(1),
-    /** One line about it. */
+    /** One line about it that says what kind of thing it is: a library, a Unity tool. */
     description: z.string().min(1),
-    /** Where it goes: an https:// URL only. */
+    /** Where its documentation is: an https:// URL only. */
     href: z.string().regex(/^https:\/\/\S+$/, "href must be an https:// URL"),
-    /** One of the ids in site.sections. */
-    section: z.enum(sectionIds),
-    /** The order in the section, smallest first. */
+    /** The order in the list, smallest first. Two projects cannot share one. */
     order: z.number().int(),
-    /** The color the row takes on hover or focus (#rrggbb). */
-    color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "color must be #rrggbb"),
   }),
 });
 
-export const collections = { links };
+export const collections = { projects };

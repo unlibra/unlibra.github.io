@@ -1,4 +1,5 @@
-# Builds the site with Astro and deploys it to GitHub Pages, then tells
+# Builds the site with Astro, checks it against DESIGN.md (tests/design.spec.js)
+# and deploys it to GitHub Pages, then tells
 # IndexNow (Bing and the other search engines that share it) which pages the
 # deploy changed (.github/scripts/indexnow.mjs). Project manuals deploy from
 # their own repositories.
@@ -37,6 +38,30 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+
+      # DESIGN.md's rules (tests/design.spec.js) on the built page. A failure
+      # stops the deploy.
+      - name: Get the Playwright version
+        id: playwright
+        run: echo "version=$(npx playwright --version | cut -d' ' -f2)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache the Playwright browser
+        id: playwright-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-chromium
+
+      - name: Install Chromium and its system libraries
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install the system libraries of Chromium (browser from the cache)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Design tests
+        run: npx playwright test
 
       # The pages as they are live now, to compare with after the deploy.
       - name: Save the live pages
