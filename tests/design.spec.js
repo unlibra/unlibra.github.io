@@ -299,6 +299,22 @@ for (const width of WIDTHS) {
       }
     });
 
+    test("5.3: links to other sites open in a new tab, links on this site in the same one", async ({ page }) => {
+      const links = await page.locator("main a").evaluateAll((as) => {
+        const host = new URL(document.querySelector('link[rel="canonical"]').href).host;
+        return as.map((a) => ({ href: a.href, other: new URL(a.href).host !== host, target: a.target, rel: a.rel }));
+      });
+      expect(links.length).toBeGreaterThan(0);
+      for (const { href, other, target, rel } of links) {
+        if (other) {
+          expect(target, href).toBe("_blank");
+          expect(rel.split(" "), href).toEqual(expect.arrayContaining(["noopener", "noreferrer"]));
+        } else {
+          expect(target, href).toBe("");
+        }
+      }
+    });
+
     test("5.5: one h1 and no skipped heading levels", async ({ page }) => {
       const levels = await page.locator("h1, h2, h3, h4, h5, h6").evaluateAll((hs) => hs.map((h) => Number(h.tagName[1])));
       expect(levels.filter((l) => l === 1)).toHaveLength(1);

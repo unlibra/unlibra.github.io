@@ -13,6 +13,7 @@ import "@fontsource/dm-mono/500.css";
 
 import booth from "../assets/logos/booth.svg";
 import github from "../assets/logos/github.svg";
+import lastfm from "../assets/logos/lastfm.png";
 import unlibra from "../assets/logos/unlibra.svg";
 import x from "../assets/logos/x.svg";
 import vrchat from "../assets/logos/vrchat.png";
@@ -34,6 +35,7 @@ const { page } = Astro.props as { page: Page };
 const LOGOS: Record<Logo, { src: string }> = {
   booth,
   github,
+  lastfm,
   unlibra,
   vrchat,
   vrcmeikan,
@@ -210,7 +212,7 @@ const TABLER = {
               <ul>
                 {section.links.map((l) => (
                   <li>
-                    <a href={l.href} rel="me">
+                    <a href={l.href} target="_blank" rel="me noopener noreferrer">
                       <img class:list={["logo", `logo-${l.logo}`]} src={LOGOS[l.logo].src} width="18" height="18" alt="" />
                       <b>{l.name}</b>
                       <svg class="go" viewBox="0 0 24 24" {...TABLER}>

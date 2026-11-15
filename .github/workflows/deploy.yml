@@ -78,8 +78,10 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: indexnow
+          # The pages, the IndexNow key file (<key>.txt) and the live pages.
           path: |
             dist/**/*.html
+            dist/*.txt
             live/
           if-no-files-found: error
           include-hidden-files: false

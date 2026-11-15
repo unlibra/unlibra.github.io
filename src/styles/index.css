@@ -46,10 +46,6 @@
   .logo-x {
     filter: invert(1);
   }
-
-  .logo-unlibra {
-    filter: invert(1) hue-rotate(180deg);
-  }
 }
 
 * {
@@ -264,6 +260,12 @@ section a:focus-visible {
   }
 
   .profile {
+    margin-top: -64px;
+  }
+
+  .profile .avatar {
+    width: 128px;
+    height: 128px;
     margin-top: -64px;
   }
 
