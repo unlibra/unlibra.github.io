@@ -1,37 +1,85 @@
-// The site settings. The projects themselves are src/content/projects/*.md, one file each.
+// What this site puts in the shared page (DESIGN.md 0). docs.unlibra.com and
+// yorucha.link have the same page, styles, scripts and tests; only this file,
+// src/content/projects/*.md and public/ differ.
 
-/** The logos a link to another site can carry. index.astro draws each one. */
-export type Logo = "github" | "unlibra";
+/** The logos of src/assets/logos/<logo>.svg. */
+export type Logo = "github" | "unlibra" | "x" | "booth" | "youtube";
 
-export type SeeAlsoLink = {
+/** The colors a section can take (DESIGN.md 7.1). */
+export type SectionColor = "sora-deep" | "catch";
+
+/** A row to another site: the logo, the name and ↗ (DESIGN.md 9.3). */
+export type LinkRow = {
   name: string;
-  /** An https:// URL on another site. */
   href: `https://${string}`;
   logo: Logo;
 };
 
-export const site = {
-  lang: "en",
+/**
+ * A section: its heading and color, and its rows. A "projects" section shows
+ * src/content/projects/*.md (pages on this site: number, name, description, >);
+ * a "links" section shows its own links (other sites: logo, name, ↗).
+ */
+export type Section =
+  | { kind: "projects"; label: string; color: SectionColor }
+  | { kind: "links"; label: string; color: SectionColor; links: readonly LinkRow[] };
+
+export type Site = {
+  lang: "en" | "ja";
   /** The locale for Open Graph. */
+  ogLocale: "en_US" | "ja_JP";
+  /** The address of the page: the canonical link, Open Graph and the structured data. */
+  url: `https://${string}/`;
+  /** The heading, and the title in the browser tab, in search results and on share cards. */
+  name: string;
+  /** The line below the heading. Left out, the page has none. */
+  lead?: string;
+  /**
+   * For search results, share cards and the structured data. It names every
+   * project, or every link on a page without projects (tests/seo.spec.js).
+   */
+  description: string;
+  /** The owner: the author of the page and, on a profile page, its subject. */
+  author: { name: string; url: `https://${string}`; sameAs: readonly `https://${string}`[] };
+  /** What the page is, for the structured data and og:type (website or profile). */
+  page: "CollectionPage" | "ProfilePage";
+  /** The icons in public/. The SVG one is required. */
+  icons: { svg: `/${string}.svg`; ico?: `/${string}.ico`; appleTouch?: `/${string}.png` };
+  /** The share image, on the small card (twitter:card summary). */
+  ogImage: { url: `https://${string}`; type: "image/png"; width: number; height: number; alt: string };
+  /**
+   * The robots tag. With "noindex", public/robots.txt must keep every crawler
+   * but Twitterbot out; without it, robots.txt must let them in and name the
+   * sitemap (tests/seo.spec.js). These two are all that differ between a page
+   * in search and one out of it (DESIGN.md 10).
+   */
+  robots: string;
+  /**
+   * The IndexNow key, when the site uses IndexNow: public/<key>.txt holds it
+   * (tests/seo.spec.js). Left out, the site has no key file.
+   */
+  indexNowKey?: string;
+  /** The sections, in this order. */
+  sections: readonly Section[];
+};
+
+export const site: Site = {
+  lang: "en",
   ogLocale: "en_US",
-  /** The address of the page, for the canonical link, Open Graph and the structured data. */
   url: "https://docs.unlibra.com/",
-  /** The title in the browser tab, in search results and on share cards. */
-  title: "unlibra Docs",
-  /** The heading of the page. */
   name: "unlibra Docs",
-  /** The line below the heading. The page's description adds the names of the projects to it. */
   lead: "Guides and references for the libraries and tools by unlibra.",
-  /** The maker, as unlibra.com describes it in its structured data. */
+  description:
+    "Guides and references for the libraries and tools by unlibra: i18n-tiny, tkinter-unblur and Mururu Blink & LipSync.",
   author: {
     name: "unlibra",
     url: "https://unlibra.com",
     sameAs: ["https://github.com/unlibra", "https://unlibra.booth.pm/"],
   },
-  /**
-   * The share image: unlibra.com's (the unlibra symbol in the middle), so the
-   * small card ("summary"), which crops it to a square, still shows the whole symbol.
-   */
+  page: "CollectionPage",
+  // The same icons as unlibra.com (the files are copies of its own).
+  icons: { svg: "/favicon.svg", ico: "/favicon.ico", appleTouch: "/apple-touch-icon.png" },
+  // unlibra.com's image: the symbol is in the middle, so the small card's square crop keeps it whole.
   ogImage: {
     url: "https://unlibra.com/ogp.png",
     type: "image/png",
@@ -39,28 +87,21 @@ export const site = {
     height: 630,
     alt: "The unlibra symbol",
   },
-  /** The color of the browser's bar: the page's background (DESIGN.md 7.1). */
-  themeColor: "#ffffff",
-  /** The heading of the list of projects. */
-  projectsLabel: "PROJECTS",
-  /** Links to other sites, after the projects: a logo and a name only. */
-  seeAlso: {
-    label: "SEE ALSO",
-    links: [
-      { name: "GitHub", href: "https://github.com/unlibra", logo: "github" },
-      { name: "Portfolio", href: "https://unlibra.com/", logo: "unlibra" },
-    ],
-  },
-} as const satisfies {
-  lang: string;
-  ogLocale: string;
-  url: `https://${string}/`;
-  title: string;
-  name: string;
-  lead: string;
-  author: { name: string; url: `https://${string}`; sameAs: readonly `https://${string}`[] };
-  ogImage: { url: `https://${string}`; type: string; width: number; height: number; alt: string };
-  themeColor: `#${string}`;
-  projectsLabel: string;
-  seeAlso: { label: string; links: readonly SeeAlsoLink[] };
+  robots: "index, follow, max-snippet:-1, max-image-preview:large",
+  // .github/scripts/indexnow.mjs sends the top page with it. The project manuals
+  // (i18n-tiny, tkinter-unblur, mururu-blink-lipsync) send their own pages from
+  // their repositories with the same key, so the file must stay.
+  indexNowKey: "67426e8c4c044cef96ebc2f901da0154",
+  sections: [
+    { kind: "projects", label: "PROJECTS", color: "sora-deep" },
+    {
+      kind: "links",
+      label: "SEE ALSO",
+      color: "catch",
+      links: [
+        { name: "GitHub", href: "https://github.com/unlibra", logo: "github" },
+        { name: "Portfolio", href: "https://unlibra.com/", logo: "unlibra" },
+      ],
+    },
+  ],
 };

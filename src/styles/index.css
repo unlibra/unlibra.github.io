@@ -1,5 +1,6 @@
-/* The top page: the projects, then links to other sites. The rules and the values are
-   DESIGN.md; tests/design.spec.js checks them. Light only. */
+/* The page shared by docs.unlibra.com and yorucha.link: the same file in both
+   repositories. The rules and the values are DESIGN.md; tests/design.spec.js checks
+   them. Light only. */
 :root {
   color-scheme: light;
   /* DESIGN.md 7.1 */
@@ -64,18 +65,14 @@ header p {
 }
 
 /* A section: its heading above its rows, or on the left from 1024px */
+/* --c, the section's color, comes from src/config/site.ts on the element. */
 section {
-  --c: var(--sora-deep);
   display: grid;
   align-items: baseline;
 }
 
 section + section {
   margin-top: 32px;
-}
-
-.see-also {
-  --c: var(--catch);
 }
 
 h2 {
@@ -187,7 +184,7 @@ section a:focus-visible {
 }
 
 /* The links to other sites: the logo where the number is, and the name */
-.see-also a {
+.links a {
   grid-template-columns: 32px 1fr 24px;
   align-items: center;
 }
@@ -196,7 +193,14 @@ section a:focus-visible {
   display: block;
   width: 18px;
   height: 18px;
-  color: var(--gray-900);
+}
+
+/* The X mark reaches its box corners, so it looks larger than the round and square
+   logos at the same size: a little smaller, at the same center (DESIGN.md 9.3). */
+.logo-x {
+  width: 16px;
+  height: 16px;
+  transform: translateX(1px);
 }
 
 @media (min-width: 640px) {
@@ -210,11 +214,6 @@ section a:focus-visible {
 
   section + section {
     margin-top: 48px;
-  }
-
-  h1 {
-    font-size: 36px;
-    line-height: 52px;
   }
 }
 
@@ -256,8 +255,8 @@ section a:focus-visible {
     transform: translateX(4px);
   }
 
-  .see-also a:hover .go,
-  .see-also a:focus-visible .go {
+  .links a:hover .go,
+  .links a:focus-visible .go {
     transform: translate(2px, -2px);
   }
 }

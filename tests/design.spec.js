@@ -1,5 +1,7 @@
-// DESIGN.md's rules, checked on the built top page at 375px and 1280px wide
-// (DESIGN.md 11). Each test names the section of DESIGN.md it checks.
+// DESIGN.md's rules, checked on the built page at 375px and 1280px wide
+// (DESIGN.md 12). Each test names the section of DESIGN.md it checks. The same
+// file in docs.unlibra.com and yorucha.link: it reads what the page shows
+// from the page itself.
 import { expect, test } from "@playwright/test";
 
 const WIDTHS = [375, 1280];
@@ -134,9 +136,15 @@ for (const width of WIDTHS) {
         }
         return { errors, checked };
       });
-      // The page's text was read: the heading, the lead, 2 section headings,
-      // 5 names, 3 descriptions and 3 numbers.
-      expect(errors.checked).toBeGreaterThanOrEqual(15);
+      // The page's text was read: the heading, the lead, the section headings,
+      // the names, and the projects' descriptions and numbers.
+      const shown = await page.evaluate(
+        () =>
+          1 +
+          document.querySelectorAll("header p, h2, section a b").length +
+          2 * document.querySelectorAll(".projects a").length,
+      );
+      expect(errors.checked).toBeGreaterThanOrEqual(shown);
       expect(errors.errors).toEqual([]);
     });
 
@@ -147,11 +155,16 @@ for (const width of WIDTHS) {
           .filter((rule) => rule instanceof CSSFontFaceRule);
         const noto = faces.filter((f) => f.style.fontFamily.replace(/"/g, "") === "Noto Sans JP Variable");
         const mono = faces.filter((f) => f.style.fontFamily.replace(/"/g, "") === "DM Mono");
+        const families = (elements, pseudo) => [
+          ...new Set([...elements].map((e) => getComputedStyle(e, pseudo).fontFamily)),
+        ];
         return {
-          h1: getComputedStyle(document.querySelector("h1")).fontFamily,
-          h2: getComputedStyle(document.querySelector("h2")).fontFamily,
+          sans: families(document.querySelectorAll("h1, header p, section a b, .desc")),
+          headings: families(document.querySelectorAll("h2")),
+          numbers: families(document.querySelectorAll(".projects a"), "::before"),
           noto: noto.length,
           mono: mono.length,
+          others: faces.length - noto.length - mono.length,
           overrides: [...new Set(noto.map((f) => `${f.style.ascentOverride} ${f.style.descentOverride}`))],
           display: [...new Set([...noto, ...mono].map((f) => f.style.fontDisplay))],
           loaded: [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/"/g, "")),
@@ -161,10 +174,12 @@ for (const width of WIDTHS) {
             .map((r) => new URL(r.name).origin),
         };
       });
-      expect(fonts.h1.startsWith('"Noto Sans JP Variable"')).toBe(true);
-      expect(fonts.h2.startsWith('"DM Mono"')).toBe(true);
+      expect(fonts.sans).toEqual(['"Noto Sans JP Variable", sans-serif']);
+      expect(fonts.headings).toEqual(['"DM Mono", monospace']);
+      expect(fonts.numbers.every((f) => f === '"DM Mono", monospace')).toBe(true);
       expect(fonts.noto).toBeGreaterThan(0);
       expect(fonts.mono).toBeGreaterThan(0);
+      expect(fonts.others).toBe(0);
       expect(fonts.overrides).toEqual(["109.4% 35.4%"]);
       expect(fonts.display).toEqual(["fallback"]);
       expect(fonts.loaded).toContain("Noto Sans JP Variable");
@@ -288,14 +303,15 @@ for (const width of WIDTHS) {
           return (left + right) / 2;
         };
         const main = document.querySelector("main").getBoundingClientRect();
+        const lead = document.querySelector("header p");
         return {
           main: (main.left + main.right) / 2,
           h1: center(document.querySelector("h1")),
-          lead: center(document.querySelector("header p")),
+          lead: lead ? center(lead) : null,
         };
       });
       expect(Math.abs(centers.h1 - centers.main)).toBeLessThanOrEqual(1);
-      expect(Math.abs(centers.lead - centers.main)).toBeLessThanOrEqual(1);
+      if (centers.lead !== null) expect(Math.abs(centers.lead - centers.main)).toBeLessThanOrEqual(1);
     });
 
     test("8: no horizontal scroll", async ({ page }) => {
