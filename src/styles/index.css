@@ -1,0 +1,213 @@
+/* One list of links. The section names sit in a column on the left; each row holds the
+   number, name, category and description. Rules only, no boxes. Hovering or focusing a row
+   shows the link's own color (--lc) as a bar on the left and a pale ground. Light only. */
+:root {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --fg: #141821;
+  --mut: #5c6474;
+  --faint: #8b92a0;
+  --line: #e2e5eb;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(40px, 11vh, 120px) 32px 80px;
+  counter-reset: link;
+}
+
+header {
+  margin-bottom: 44px;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+header p {
+  margin-top: 10px;
+  font-size: 15px;
+  color: var(--mut);
+}
+
+section {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0 24px;
+  border-top: 1.5px solid var(--fg);
+  margin-top: 36px;
+}
+
+section:first-of-type {
+  margin-top: 0;
+}
+
+h2 {
+  display: flex;
+  align-items: center;
+  align-self: start;
+  gap: 9px;
+  padding-top: 21px;
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.16em;
+}
+
+h2::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c);
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  counter-increment: link;
+}
+
+li a {
+  display: grid;
+  grid-template-columns: 2.2em 12.5em 7em 1fr 1.4em;
+  gap: 0 16px;
+  align-items: baseline;
+  padding: 16px 12px;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  transition:
+    background-color 0.15s,
+    box-shadow 0.15s;
+}
+
+li:last-child a {
+  border-bottom: 0;
+}
+
+li a::before {
+  content: counter(link, decimal-leading-zero);
+  font: 500 11px var(--mono);
+  color: var(--faint);
+  transition: color 0.15s;
+}
+
+li a::after {
+  content: "\2192";
+  justify-self: end;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--faint);
+  transition:
+    transform 0.2s,
+    color 0.15s;
+}
+
+li a b {
+  font-size: 16.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+li a small {
+  font: 500 11px var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+
+li a span {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--mut);
+}
+
+li a:hover,
+li a:focus-visible {
+  background: color-mix(in srgb, var(--lc, var(--fg)) 9%, var(--bg));
+  box-shadow: inset 3px 0 0 var(--lc, var(--fg));
+}
+
+li a:hover::before,
+li a:focus-visible::before {
+  color: var(--fg);
+}
+
+li a:hover::after,
+li a:focus-visible::after {
+  transform: translateX(4px);
+  color: var(--fg);
+}
+
+li a:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}
+
+@media (max-width: 700px) {
+  main {
+    padding: 32px 20px 56px;
+  }
+
+  header {
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-size: 27px;
+  }
+
+  section {
+    grid-template-columns: 1fr;
+    margin-top: 28px;
+  }
+
+  h2 {
+    padding: 16px 0 4px;
+  }
+
+  li a {
+    grid-template-columns: 2.2em 1fr auto;
+    gap: 0 12px;
+    padding: 14px 6px;
+  }
+
+  li a::after {
+    display: none;
+  }
+
+  li a span {
+    grid-column: 2 / -1;
+    margin-top: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  li a,
+  li a::before,
+  li a::after {
+    transition: none;
+  }
+}

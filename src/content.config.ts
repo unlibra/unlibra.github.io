@@ -2,16 +2,16 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
-import { ARCHS, site } from "./config/site";
+import { site } from "./config/site";
 
 const sectionIds = site.sections.map((s) => s.id) as [string, ...string[]];
 
-// One file per link. Every field is required except arch, so a missing field
-// or an unknown section fails the build.
+// One file per link. Every field is required, so a missing field or an unknown
+// section fails the build.
 const links = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/links" }),
   schema: z.object({
-    /** The name. The shape of the building also comes from it. */
+    /** The name. */
     name: z.string().min(1),
     /** The kind, shown small next to the name. */
     category: z.string().min(1),
@@ -23,10 +23,8 @@ const links = defineCollection({
     section: z.enum(sectionIds),
     /** The order in the section, smallest first. */
     order: z.number().int(),
-    /** The color in the diorama (#rrggbb). */
+    /** The color the row takes on hover or focus (#rrggbb). */
     color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "color must be #rrggbb"),
-    /** Names the type of building. Left out, the name decides it. */
-    arch: z.enum(ARCHS).optional(),
   }),
 });
 

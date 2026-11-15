@@ -1,23 +1,12 @@
 ---
-// The portal: a diorama with one building per link. Links are src/content/links/*.md,
-// the site settings src/config/site.ts. The diorama (src/portal/) reads the list of
-// links in <main id="plain">; this page only writes that list from the settings and links.
+// The portal: one list of links, grouped by section. Links are src/content/links/*.md,
+// the site settings src/config/site.ts.
 import { getCollection } from "astro:content";
 
-import { LIMITS, site } from "../config/site";
-import bootJs from "../portal/boot.js?raw";
-import mainJs from "../portal/main.js?raw";
-import portalCss from "../portal/portal.css?raw";
+import { site } from "../config/site";
+import "../styles/index.css";
 
 const links = await getCollection("links");
-
-// Stop the build on counts the diorama cannot lay out
-if (links.length < LIMITS.minLinks || links.length > LIMITS.maxLinks) {
-  throw new Error(`${LIMITS.minLinks} to ${LIMITS.maxLinks} links, not ${links.length}`);
-}
-if (site.sections.length > LIMITS.maxSections) {
-  throw new Error(`${LIMITS.maxSections} sections at most, not ${site.sections.length}`);
-}
 
 const sections = site.sections.map((section) => ({
   ...section,
@@ -50,7 +39,7 @@ const jsonLd = {
 <html lang={site.lang}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>{site.title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={SITE_URL} />
@@ -67,25 +56,28 @@ const jsonLd = {
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@500;600&display=swap"
+    />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    <script is:inline set:html={bootJs} />
-    <style is:inline set:html={portalCss}></style>
   </head>
   <body>
-    <!-- The links. The diorama reads them from here; without JavaScript or WebGL, this list is the portal. -->
-    <main id="plain">
+    <main>
       <header>
         <h1>{site.name}</h1>
         <p>{site.lead}</p>
       </header>
       {
         sections.map((section) => (
-          <section data-id={section.id} data-color={section.color} style={`--c:${section.color}`}>
+          <section style={`--c:${section.color}`}>
             <h2>{section.id}</h2>
             <ul>
               {section.links.map((link) => (
                 <li>
-                  <a href={link.href} data-color={link.color} data-arch={link.arch}>
+                  <a href={link.href} style={`--lc:${link.color}`}>
                     <b>{link.name}</b>
                     <small>{link.category}</small>
                     <span>{link.description}</span>
@@ -97,25 +89,5 @@ const jsonLd = {
         ))
       }
     </main>
-
-    <div id="app" data-title={site.name}>
-      <canvas id="gl" aria-hidden="true"></canvas>
-      <div id="wash" aria-hidden="true"></div>
-      <header id="hd">
-        <h1><span class="mono">{site.mark}</span><i>／</i>{site.name}</h1>
-        <ul id="legend" aria-label={site.ui.sectionsLabel}></ul>
-      </header>
-      <nav id="labels" aria-label={site.ui.linksLabel}></nav>
-      <footer id="ft">
-        <p id="cap"><b class="cnum"></b><span class="cname"></span><span class="cdesc"></span></p>
-        <p id="hint"></p>
-      </footer>
-      <div id="load" role="status" aria-live="polite">{site.ui.loading}</div>
-      <div id="toast" role="status" aria-live="polite"></div>
-    </div>
-
-    <script is:inline type="application/json" id="portal-ui" set:html={JSON.stringify(site.ui).replace(/</g, "\\u003c")} />
-
-    <script is:inline set:html={mainJs} />
   </body>
 </html>
