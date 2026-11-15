@@ -1,0 +1,3 @@
+# The test code is left out of GitHub's language stats (Linguist).
+tests/** linguist-detectable=false
+playwright.config.js linguist-detectable=false
