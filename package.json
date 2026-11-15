@@ -1,0 +1,29 @@
+{
+  "name": "unlibra-github-io",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "pretest": "npm run build",
+    "test:e2e": "npm run build && playwright test"
+  },
+  "dependencies": {
+    "@fontsource-variable/noto-sans-jp": "^5.3.1",
+    "@fontsource/dm-mono": "^5.3.0",
+    "astro": "^7.4.12"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@playwright/test": "^1.64.1",
+    "subset-font": "^2.9.0",
+    "typescript": "^5.9.3"
+  }
+}
