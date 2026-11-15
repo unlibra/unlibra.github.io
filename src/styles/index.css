@@ -1,16 +1,21 @@
 /* The page shared by docs.unlibra.com and yorucha.link: the same file in both
    repositories. The rules and the values are DESIGN.md; tests/design.spec.js checks
-   them. Light only. */
+   them. Light or dark, as the system is set. */
 :root {
-  color-scheme: light;
-  /* DESIGN.md 7.1 */
+  color-scheme: light dark;
+  /* DESIGN.md 7.1: light */
+  --bg: #ffffff;
   --gray-900: #111827;
   --gray-600: #4b5563;
   --gray-500: #6b7280;
-  --sora-deep: #4d9fd6;
-  --catch: #ee7800;
   --primary: #277db2;
   --link-hover: #005d91;
+  /* The hover ground: the section's color mixed into the background */
+  --tint: 8%;
+  /* DESIGN.md 7.2: the section colors, the same in light and dark */
+  --shinbashi: #4a9fac;
+  --ouni: #e96f42;
+  --fujimurasaki: #968bcc;
   /* DESIGN.md 6.1: as on unlibra.com */
   --sans: "Noto Sans JP Variable", sans-serif;
   --mono: "DM Mono", monospace;
@@ -24,6 +29,29 @@
   }
 }
 
+/* DESIGN.md 7.1: dark, the colors of unlibra.com's dark theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #333842;
+    --gray-900: #ffffff;
+    --gray-600: #d1d5db;
+    --gray-500: #d1d5db;
+    --primary: #a0d8ef;
+    --link-hover: #a5def5;
+    --tint: 12%;
+  }
+
+  /* The black logos turn white; the unlibra symbol swaps its colors, as on unlibra.com */
+  .logo-github,
+  .logo-x {
+    filter: invert(1);
+  }
+
+  .logo-unlibra {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -31,7 +59,7 @@
 }
 
 html {
-  background: #fff;
+  background: var(--bg);
   color: var(--gray-600);
   font-family: var(--sans);
   -webkit-text-size-adjust: 100%;
@@ -134,7 +162,7 @@ section a b {
 
 section a:hover,
 section a:focus-visible {
-  background: color-mix(in srgb, var(--c) 8%, #fff);
+  background: color-mix(in srgb, var(--c) var(--tint), var(--bg));
 }
 
 section a:hover b,

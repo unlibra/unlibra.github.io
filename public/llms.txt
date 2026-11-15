@@ -6,8 +6,8 @@ Each project's documentation has its own llms.txt with every page, and llms-full
 
 ## Projects
 
-- [i18n-tiny](https://docs.unlibra.com/i18n-tiny/llms.txt): Tiny, type-safe, zero-dependency i18n library for Next.js, Astro and React.
 - [tkinter-unblur](https://docs.unlibra.com/tkinter-unblur/llms.txt): Fix blurry Tkinter applications on Windows 10/11 high-DPI displays.
+- [i18n-tiny](https://docs.unlibra.com/i18n-tiny/llms.txt): Tiny, type-safe, zero-dependency i18n library for Next.js, Astro and React.
 
 ## Optional
 

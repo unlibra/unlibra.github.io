@@ -5,9 +5,12 @@
 import { expect, test } from "@playwright/test";
 
 const WIDTHS = [375, 1280];
+/** The system's color scheme: the page follows it (DESIGN.md 7.1). */
+const SCHEMES = ["light", "dark"];
 
 /** Opens the top page at `width` and waits for the web fonts. */
-const open = async (page, width) => {
+const open = async (page, width, colorScheme) => {
+  await page.emulateMedia({ colorScheme });
   await page.setViewportSize({ width, height: 900 });
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
@@ -79,9 +82,22 @@ const contrastErrors = (root) =>
     return errors;
   }, helpers.toString());
 
+for (const colorScheme of SCHEMES)
 for (const width of WIDTHS) {
-  test.describe(`${width}px`, () => {
-    test.beforeEach(async ({ page }) => open(page, width));
+  test.describe(`${colorScheme}, ${width}px`, () => {
+    test.beforeEach(async ({ page }) => open(page, width, colorScheme));
+
+    test("7.2: the section dots reach 3:1 on the background", async ({ page }) => {
+      const ratios = await page.evaluate((helpersSource) => {
+        const { rgb, contrast, backgrounds } = new Function(`return (${helpersSource})()`)();
+        return [...document.querySelectorAll("h2")].map((h2) => {
+          const dot = rgb(getComputedStyle(h2, "::before").backgroundColor).c;
+          return { section: h2.textContent, ratio: Math.min(...backgrounds(h2).map((bg) => contrast(dot, bg))) };
+        });
+      }, helpers.toString());
+      expect(ratios.length).toBeGreaterThan(0);
+      for (const { section, ratio } of ratios) expect(ratio, section).toBeGreaterThanOrEqual(3);
+    });
 
     test("2.1, 2.2: the sizes and the line heights of the text", async ({ page }) => {
       const errors = await page.evaluate(() => {
@@ -255,7 +271,16 @@ for (const width of WIDTHS) {
           }),
         );
       }
-      for (const { link, ring } of rings) expect(ring, link).toBe("solid 2px rgb(39, 125, 178)");
+      // The primary color of the scheme (DESIGN.md 7.1).
+      const primary = await page.evaluate(() => {
+        const probe = document.createElement("i");
+        probe.style.color = "var(--primary)";
+        document.body.append(probe);
+        const color = getComputedStyle(probe).color;
+        probe.remove();
+        return color;
+      });
+      for (const { link, ring } of rings) expect(ring, link).toBe(`solid 2px ${primary}`);
     });
 
     test("5.4: the rows are 44px high or more, the other links 24px square or more", async ({ page }) => {

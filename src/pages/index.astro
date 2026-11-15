@@ -110,8 +110,10 @@ const TABLER = {
     <meta name="robots" content={site.robots} />
     <link rel="canonical" href={site.url} />
     <link rel="author" href={site.author.url} />
-    <meta name="color-scheme" content="light" />
-    <meta name="theme-color" content="#ffffff" />
+    <!-- Light or dark as the system is set (DESIGN.md 7.1): the page's background -->
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#333842" media="(prefers-color-scheme: dark)" />
 
     {site.icons.ico && <link rel="icon" href={site.icons.ico} sizes="32x32" />}
     <link rel="icon" href={site.icons.svg} type="image/svg+xml" />

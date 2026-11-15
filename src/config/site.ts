@@ -5,8 +5,8 @@
 /** The logos of src/assets/logos/<logo>.svg. */
 export type Logo = "github" | "unlibra" | "x" | "booth" | "youtube";
 
-/** The colors a section can take (DESIGN.md 7.1). */
-export type SectionColor = "sora-deep" | "catch";
+/** The colors a section can take: Japanese traditional colors (DESIGN.md 7.2). */
+export type SectionColor = "shinbashi" | "ouni" | "fujimurasaki";
 
 /** A row to another site: the logo, the name and ↗ (DESIGN.md 9.3). */
 export type LinkRow = {
@@ -70,7 +70,7 @@ export const site: Site = {
   name: "unlibra Docs",
   lead: "Guides and references for the libraries and tools by unlibra.",
   description:
-    "Guides and references for the libraries and tools by unlibra: i18n-tiny, tkinter-unblur and Mururu Blink & LipSync.",
+    "Guides and references for the libraries and tools by unlibra: tkinter-unblur, i18n-tiny and Mururu Blink & LipSync.",
   author: {
     name: "unlibra",
     url: "https://unlibra.com",
@@ -93,14 +93,14 @@ export const site: Site = {
   // their repositories with the same key, so the file must stay.
   indexNowKey: "67426e8c4c044cef96ebc2f901da0154",
   sections: [
-    { kind: "projects", label: "PROJECTS", color: "sora-deep" },
+    { kind: "projects", label: "PROJECTS", color: "shinbashi" },
     {
       kind: "links",
       label: "SEE ALSO",
-      color: "catch",
+      color: "ouni",
       links: [
-        { name: "GitHub", href: "https://github.com/unlibra", logo: "github" },
         { name: "Portfolio", href: "https://unlibra.com/", logo: "unlibra" },
+        { name: "GitHub", href: "https://github.com/unlibra", logo: "github" },
       ],
     },
   ],
