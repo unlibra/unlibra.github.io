@@ -19,7 +19,6 @@ docs.unlibra.com と yorucha.link のトップページに共通の、見た目�
 | `src/pages/[...path].astro`、`src/styles/index.css`、`src/content.config.ts`        | `src/config/site.ts` の値（型は共通）、`src/assets/profile/`        |
 | `src/assets/logos/`、`scripts/`、`astro.config.mjs`、`LICENSES/`                     | `src/content/projects/*.md`（プロジェクトがないサイトは空）        |
 | `tests/`、`playwright.config.js`、`.github/workflows/test.yml`                       | `public/`（アイコン、共有の画像、`robots.txt`、サイトマップ、`llms.txt`） |
-| `.github/workflows/production-check.yml`（`SITE` と `FILES` だけ違う）               | デプロイの仕方（docs.unlibra.com は GitHub Pages、yorucha.link は Cloudflare Workers Builds）と、それに付くファイル |
 | この `DESIGN.md`                                                                     | README                                                             |
 
 `src/config/site.ts` は、サイトのページ（`pages`）と IndexNow の鍵（任意）を持ちます。ページごとに決めるのは、ビルドでの置き場所（`path`）、言語、URL、名前（h1 と題）、リード（任意）、説明文、作者、ページの種類、アイコン、共有の画像、`robots` のタグ、プロフィールの見出し（任意）、区画です。docs.unlibra.com のページは1つ（`/`）、yorucha.link は2つ（`/` と、vrc.yorucha.link で出す `/vrc/`）です。区画は「プロジェクトの区画」（`src/content/projects/*.md` を出す）か「リンクの区画」（ほかのサイトへのリンクを出す）のどちらかです。中身を足すだけで、どちらのサイトにも同じ部品が出ます。
