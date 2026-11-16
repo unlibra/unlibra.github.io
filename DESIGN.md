@@ -226,7 +226,7 @@ USWDS からは考え方だけを借ります。見た目（書体、色、大�
 ### 9.3 リンクの行
 
 - ほかのサイトへのリンクです（`src/config/site.ts` のリンクの区画）。プロジェクトの行と同じ形で、番号の位置にロゴを置き、名前だけを出します。番号・説明は置きません。リンクは `rel="me"` です。
-- ロゴは名前と同じ 18px で、`src/assets/logos/` のファイルを使います（github、unlibra、x、booth、youtube、lastfm、vrchat、vrcmeikan）。Last.fm、VRChat、VRC名鑑はサイトのアイコン（96px の PNG）です。unlibra のシンボルは、ダークの色の入れ替えを SVG の中に持ちます。ほかのロゴ名を書くと型の検査で止まります。YouTube だけは unlibra.com のフッターと同じ Tabler Icons の `brand-youtube`（Filled）を赤（#ff0000）にし、再生の三角を白で塗ったもので、ほかは各サービスの公式のファイルです。
+- ロゴは名前と同じ 18px で、`src/assets/logos/` のファイルを使います（github、unlibra、x、booth、youtube、lastfm、vrchat）。Last.fm と VRChat はサイトのアイコン（96px の PNG）です。unlibra のシンボルは、ダークの色の入れ替えを SVG の中に持ちます。ほかのロゴ名を書くと型の検査で止まります。YouTube だけは unlibra.com のフッターと同じ Tabler Icons の `brand-youtube`（Filled）を赤（#ff0000）にし、再生の三角を白で塗ったもので、ほかは各サービスの公式のファイルです。
 - **例外：** YouTube の公式のアイコンは、高さ 100px 以上で使う決まりがあり、18px では守れません。決まりを守れない公式のアイコンを使うより、公式でないことがはっきりした形にします。
 - **例外：** X のマークは箱の角まで届くので、同じ大きさでは丸や四角のロゴより大きく見えます。16px にして、中心をほかのロゴとそろえます。
 

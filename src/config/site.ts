@@ -2,8 +2,8 @@
 // yorucha.link have the same page, styles, scripts and tests; only this file,
 // src/content/projects/*.md, src/assets/profile/ and public/ differ.
 
-/** The logos of src/assets/logos/<logo>.svg (vrchat, vrcmeikan, lastfm: .png). */
-export type Logo = "github" | "unlibra" | "x" | "booth" | "youtube" | "lastfm" | "vrchat" | "vrcmeikan";
+/** The logos of src/assets/logos/<logo>.svg (vrchat, lastfm: .png). */
+export type Logo = "github" | "unlibra" | "x" | "booth" | "youtube" | "lastfm" | "vrchat";
 
 /** The colors a section can take: Japanese traditional colors (DESIGN.md 7.2). */
 export type SectionColor = "shinbashi" | "ouni" | "fujimurasaki";
