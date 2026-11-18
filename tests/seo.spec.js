@@ -19,8 +19,8 @@ const rows = (page) =>
 for (const p of site.pages) {
   test.describe(`${p.path} (${p.url})`, () => {
     const indexed = !/\bnoindex\b/.test(p.robots);
-    /** The build's path of a file at the root of the page's host. */
-    const local = (file) => `${p.path}${file.replace(/^\//, "")}`;
+    /** The build's path of a file at the root of the page's host: site.shared at the root, the others at the page's path. */
+    const local = (file) => (site.shared?.includes(file) ? file : `${p.path}${file.replace(/^\//, "")}`);
 
     test.beforeEach(async ({ page }) => {
       await page.goto(p.path);
@@ -79,6 +79,9 @@ for (const p of site.pages) {
       );
       expect(hrefs).toContain(p.icons.svg);
       for (const href of hrefs) expect((await request.get(local(href))).status(), href).toBe(200);
+      // favicon.ico has no tag, for browsers without SVG icons to find at the root.
+      expect(hrefs.filter((href) => href.endsWith(".ico"))).toEqual([]);
+      expect((await request.get(local("/favicon.ico"))).status()).toBe(200);
       if (p.ogImage.url.startsWith(p.url)) {
         expect((await request.get(local(new URL(p.ogImage.url).pathname))).status()).toBe(200);
       }

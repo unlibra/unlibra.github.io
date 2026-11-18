@@ -21,7 +21,7 @@ docs.unlibra.com と yorucha.link のトップページに共通の、見た目�
 | `tests/`、`playwright.config.js`、`.github/workflows/test.yml`                       | `public/`（アイコン、共有の画像、`robots.txt`、サイトマップ、`llms.txt`） |
 | この `DESIGN.md`                                                                     | README                                                             |
 
-`src/config/site.ts` は、サイトのページ（`pages`）と IndexNow の鍵（任意）を持ちます。ページごとに決めるのは、ビルドでの置き場所（`path`）、言語、URL、名前（h1 と題）、リード（任意）、説明文、作者、ページの種類、アイコン、共有の画像、`robots` のタグ、プロフィールの見出し（任意）、区画です。docs.unlibra.com のページは1つ（`/`）、yorucha.link は2つ（`/` と、vrc.yorucha.link で出す `/vrc/`）です。区画は「プロジェクトの区画」（`src/content/projects/*.md` を出す）か「リンクの区画」（ほかのサイトへのリンクを出す）のどちらかです。中身を足すだけで、どちらのサイトにも同じ部品が出ます。
+`src/config/site.ts` は、サイトのページ（`pages`）と IndexNow の鍵（任意）、ページのホストがどれもルートに出す共通のファイル（`shared`、任意）を持ちます。ページごとに決めるのは、ビルドでの置き場所（`path`）、言語、URL、名前（h1 と題）、リード（任意）、説明文、作者、ページの種類、アイコン、共有の画像、`robots` のタグ、プロフィールの見出し（任意）、区画です。docs.unlibra.com のページは1つ（`/`）、yorucha.link は2つ（`/` と、vrc.yorucha.link で出す `/vrc/`）です。区画は「プロジェクトの区画」（`src/content/projects/*.md` を出す）か「リンクの区画」（ほかのサイトへのリンクを出す）のどちらかです。中身を足すだけで、どちらのサイトにも同じ部品が出ます。
 
 # 第1部 どこでも使える規則
 
@@ -241,7 +241,7 @@ USWDS からは考え方だけを借ります。見た目（書体、色、大�
 どちらのサイトも、同じタグとファイルを持ちます。
 
 - **タグ：** 題、説明、正規の URL、作者、`robots`、Open Graph（小さいカード、`twitter:card summary`）、X のカード、構造化データ。構造化データは、サイト（`WebSite`）と、ページ（`CollectionPage` は行の一覧、`ProfilePage` は持ち主とリンクの `sameAs`）です。
-- **ファイル：** `robots.txt`、`sitemap.xml`、`llms.txt`、`third-party-licenses.txt`。`/` 以外のページは、自分の `robots.txt`、`sitemap.xml`、`llms.txt`、アイコン、共有の画像を `public/` + `path` に持ちます。yorucha.link では Worker（`worker/index.js`）が、vrc.yorucha.link に `/vrc/` の中身をルートとして出し、`yorucha.link/vrc/` は vrc.yorucha.link へ転送します（ページの住所を1つにするため）。
+- **ファイル：** `robots.txt`、`sitemap.xml`、`llms.txt`、`third-party-licenses.txt`、`favicon.ico`。アイコンのタグは SVG と `apple-touch-icon` だけで、`favicon.ico` はタグで指さずホストのルートに置きます（SVG のアイコンを使えないブラウザが自分で取りに来る分）。`/` 以外のページは、自分の `robots.txt`、`sitemap.xml`、`llms.txt`、アイコン、共有の画像を `public/` + `path` に持ちます。ただし `shared` のファイルは `public/` に1つだけ置き、どのホストもルートに出します。yorucha.link では Worker（`worker/index.js`）が、vrc.yorucha.link に `/vrc/` の中身をルートとして出し、`yorucha.link/vrc/` は vrc.yorucha.link へ転送します（ページの住所を1つにするため）。
 - 検索に出すかどうかは、ページごとに `src/config/site.ts` の `robots` と、そのページの `robots.txt` の2つだけで切り替えます。`noindex` のときは、`robots.txt` で Twitterbot（X のカードのため）以外のクローラーをすべて止めます。`noindex` でないときは、すべてのクローラーを入れ、サイトマップを名指しします。2つが食い違うとテストが止まります。
 - IndexNow は使うサイトだけが鍵（`indexNowKey`）を持ちます。docs.unlibra.com は鍵を持ち、デプロイのあとにトップページを送ります（`.github/scripts/indexnow.mjs`。`noindex` のページは送らない）。各プロジェクトのマニュアルは、同じ鍵でそれぞれのリポジトリから自分のページを送ります。yorucha.link は IndexNow を使いません。
 
