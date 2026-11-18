@@ -50,8 +50,12 @@ export type Page = {
   author: { name: string; url: `https://${string}`; sameAs: readonly `https://${string}`[] };
   /** What the page is, for the structured data and og:type (website or profile). */
   page: "CollectionPage" | "ProfilePage";
-  /** The icons in public/. The SVG one is required. */
-  icons: { svg: `/${string}.svg`; ico?: `/${string}.ico`; appleTouch?: `/${string}.png` };
+  /**
+   * The icons the page links to, in public/. The SVG one is required. No link
+   * to favicon.ico: it is only at the root of the host, for browsers without
+   * SVG icons, which ask for /favicon.ico on their own (tests/seo.spec.js).
+   */
+  icons: { svg: `/${string}.svg`; appleTouch?: `/${string}.png` };
   /** The share image, on the small card (twitter:card summary). */
   ogImage: { url: `https://${string}`; type: "image/png" | "image/jpeg"; width: number; height: number; alt: string };
   /**
@@ -77,6 +81,12 @@ export type Site = {
    * (tests/seo.spec.js). Left out, the site has no key file.
    */
   indexNowKey?: string;
+  /**
+   * Files at the root of public/ that the host of every page serves at its
+   * root, so a page at another path has no copy of them (yorucha.link:
+   * worker/index.js). Left out, a page has its own files at public/ + its path.
+   */
+  shared?: readonly `/${string}`[];
   /** The pages. One of them is at "/". */
   pages: readonly Page[];
 };
@@ -103,7 +113,7 @@ export const site: Site = {
       },
       page: "CollectionPage",
       // The same icons as unlibra.com (the files are copies of its own).
-      icons: { svg: "/favicon.svg", ico: "/favicon.ico", appleTouch: "/apple-touch-icon.png" },
+      icons: { svg: "/favicon.svg", appleTouch: "/apple-touch-icon.png" },
       // unlibra.com's image: the symbol is in the middle, so the small card's square crop keeps it whole.
       ogImage: {
         url: "https://unlibra.com/ogp.png",
